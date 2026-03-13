@@ -1,0 +1,21 @@
+- **haversine**
+  - [__init__.py](haversine/__init__.py.md)
+  - [haversine.py](haversine/haversine.py.md)
+  - [haversine2.py](haversine/haversine2.py.md)
+- **tests**
+  - [__init__.py](tests/__init__.py.md)
+  - [geo_ressources.py](tests/geo_ressources.py.md)
+  - [haversine_baseline.py](tests/haversine_baseline.py.md)
+  - [test_haversine_vector.py](tests/test_haversine_vector.py.md)
+  - [test_haversine.py](tests/test_haversine.py.md)
+  - [test_inverse_haversine_vector.py](tests/test_inverse_haversine_vector.py.md)
+  - [test_inverse_haversine.py](tests/test_inverse_haversine.py.md)
+  - [test_performance.py](tests/test_performance.py.md)
+- [CHANGELOG.md](CHANGELOG.md)
+- <span class="xp-unrendered" data-path="LICENSE">LICENSE</span>
+- <span class="xp-unrendered" data-path="Makefile">Makefile</span>
+- <span class="xp-unrendered" data-path="Pipfile">Pipfile</span>
+- <span class="xp-unrendered" data-path="Pipfile.lock">Pipfile.lock</span>
+- [README.md](/)
+- <span class="xp-unrendered" data-path="setup.cfg">setup.cfg</span>
+- [setup.py](setup.py.md)
