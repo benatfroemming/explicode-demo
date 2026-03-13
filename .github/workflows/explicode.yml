@@ -1,0 +1,31 @@
+name: Deploy Explicode Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # lets users trigger it manually from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to push to gh-pages branch
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build docs
+        run: npx explicode build
+        # run: node cli.js build --dark
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

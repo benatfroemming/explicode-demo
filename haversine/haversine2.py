@@ -1,3 +1,33 @@
+"""
+# Haversine Geospatial Distance Module
+
+This module implements utilities for computing **great-circle distances**
+between geographic coordinates using the **Haversine formula**.
+
+## Overview
+
+Latitude and longitude coordinates lie on a **sphere**, not on a flat plane.
+Because of this, simple Euclidean distance cannot be used to measure distance
+between two coordinates on Earth.
+
+Instead we compute the **central angle between two points on a sphere**
+and multiply it by the Earth's radius.
+
+distance = R × central_angle
+
+Where:
+
+R = Earth's radius  
+central_angle = angle between the two points
+
+## Key Features
+
+- Multiple distance units (km, miles, meters, etc.)
+- Scalar calculations using `math`
+- Vectorized calculations using `numpy`
+- Optional performance acceleration using `numba`
+- Forward and inverse geospatial calculations
+"""
 from enum import Enum
 from math import pi
 from typing import Union, Tuple
@@ -7,10 +37,28 @@ import math
 # mean earth radius - https://en.wikipedia.org/wiki/Earth_radius#Mean_radius
 _AVG_EARTH_RADIUS_KM = 6371.0088
 
+
 """
 Enumeration of supported units.
 The full list can be checked by iterating over the class; e.g.
 the expression `tuple(Unit)`.
+
+## Purpose
+
+Defines the units that haversine distances can be returned in.
+
+## Members
+
+| Unit | Meaning |
+|-----|--------|
+| KILOMETERS | distance in km |
+| METERS | distance in meters |
+| MILES | distance in miles |
+| NAUTICAL_MILES | nautical miles |
+| FEET | imperial feet |
+| INCHES | imperial inches |
+| RADIANS | angular distance |
+| DEGREES | angular distance in degrees |
 """
 class Unit(str, Enum):
     KILOMETERS = 'km'
@@ -22,11 +70,23 @@ class Unit(str, Enum):
     RADIANS = 'rad'
     DEGREES = 'deg'
 
+
 """
 Enumeration of supported directions.
 The full list can be checked by iterating over the class; e.g.
 the expression `tuple(Direction)`.
 Angles expressed in radians.
+
+## Purpose
+
+Used by `inverse_haversine()` to specify the **direction of travel**.
+
+## Direction Angles
+
+North = 0  
+East = π/2  
+South = π  
+West = 3π/2
 """
 class Direction(float, Enum):
     NORTH = 0.0
@@ -52,11 +112,37 @@ _CONVERSIONS = {
 }
 
 
+"""
+## get_avg_earth_radius
+
+Returns the Earth's radius converted to the desired unit.
+
+### Parameters
+
+unit : Unit  
+    Desired output unit.
+
+### Returns
+
+float  
+    Earth radius expressed in the requested unit.
+"""
 def get_avg_earth_radius(unit):
     return _AVG_EARTH_RADIUS_KM * _CONVERSIONS[unit]
 
+
 """
 Normalize point to [-90, 90] latitude and [-180, 180] longitude.
+
+### Parameters
+
+lat : float  
+lon : float  
+
+### Returns
+
+Tuple[float,float]
+Normalized latitude and longitude.
 """
 def _normalize(lat: float, lon: float) -> Tuple[float, float]:
     lat = (lat + 90) % 360 - 90
@@ -66,8 +152,20 @@ def _normalize(lat: float, lon: float) -> Tuple[float, float]:
     lon = (lon + 180) % 360 - 180
     return lat, lon
 
+
 """
 Normalize points to [-90, 90] latitude and [-180, 180] longitude.
+
+Vectorized version of `_normalize()`.
+
+### Parameters
+
+lat : numpy.ndarray  
+lon : numpy.ndarray  
+
+### Returns
+
+Tuple[numpy.ndarray,numpy.ndarray]
 """
 def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["numpy.ndarray", "numpy.ndarray"]:
     lat = (lat + 90) % 360 - 90
@@ -80,7 +178,16 @@ def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["nump
 
 
 """
-Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
+Ensure that the given latitude and longitude have proper values.
+
+### Parameters
+
+lat : float  
+lon : float  
+
+### Raises
+
+ValueError if coordinates are outside valid Earth ranges.
 """
 def _ensure_lat_lon(lat: float, lon: float):
     if lat < -90 or lat > 90:
@@ -90,7 +197,9 @@ def _ensure_lat_lon(lat: float, lon: float):
 
 
 """
-Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
+Ensure that the given latitude and longitude have proper values.
+
+Vectorized validation version.
 """
 def _ensure_lat_lon_vector(lat: "numpy.ndarray", lon: "numpy.ndarray"):
     if numpy.abs(lat).max() > 90:
@@ -102,9 +211,14 @@ def _ensure_lat_lon_vector(lat: "numpy.ndarray", lon: "numpy.ndarray"):
 def _explode_args(f):
     return lambda ops: f(**ops.__dict__)
 
+
 """
 Compute the haversine distance on unit sphere.  Inputs are in degrees,
 either scalars (with ops==math) or arrays (with ops==numpy).
+
+### Returns
+
+Function that calculates angular distance between coordinates.
 """
 @_explode_args
 def _create_haversine_kernel(*, asin=None, arcsin=None, cos, radians, sin, sqrt, **_):
@@ -126,9 +240,11 @@ def _create_haversine_kernel(*, asin=None, arcsin=None, cos, radians, sin, sqrt,
 
 
 """
-Compute the inverse haversine on unit sphere.  lat/lng are in degrees,
-direction in radians; all inputs are either scalars (with ops==math) or
-arrays (with ops==numpy).
+Compute the inverse haversine on unit sphere.
+
+### Returns
+
+Function computing destination coordinates.
 """
 @_explode_args
 def _create_inverse_haversine_kernel(*, asin=None, arcsin=None, atan2=None, arctan2=None, cos, degrees, radians, sin, sqrt, **_):
@@ -151,6 +267,7 @@ def _create_inverse_haversine_kernel(*, asin=None, arcsin=None, atan2=None, arct
 _haversine_kernel = _create_haversine_kernel(math)
 _inverse_haversine_kernel = _create_inverse_haversine_kernel(math)
 
+
 try:
     import numpy
     has_numpy = True
@@ -159,6 +276,7 @@ try:
 except ModuleNotFoundError:
     # Import error will be reported in haversine_vector() / inverse_haversine_vector()
     has_numpy = False
+
 
 try:
     import numba # type: ignore
@@ -175,28 +293,14 @@ except ModuleNotFoundError:
 """ 
 Calculate the great-circle distance between two points on the Earth surface.
 
-Takes two 2-tuples, containing the latitude and longitude of each point in decimal degrees,
-and, optionally, a unit of length.
+:param point1: first point; tuple of (latitude, longitude)
+:param point2: second point; tuple of (latitude, longitude)
+:param unit: output unit
+:param normalize: normalize coordinates
+:param check: validate coordinate ranges
 
-:param point1: first point; tuple of (latitude, longitude) in decimal degrees
-:param point2: second point; tuple of (latitude, longitude) in decimal degrees
-:param unit: a member of haversine.Unit, or, equivalently, a string containing the
-                initials of its corresponding unit of measurement (i.e. miles = mi)
-                default 'km' (kilometers).
-:param normalize: if True, normalize the points to [-90, 90] latitude and [-180, 180] longitude.
-:param check: if True, check that points are normalized.
-
-Example: ``haversine((45.7597, 4.8422), (48.8567, 2.3508), unit=Unit.METERS)``
-
-Precondition: ``unit`` is a supported unit (supported units are listed in the `Unit` enum)
-
-:return: the distance between the two points in the requested unit, as a float.
-
-The default returned unit is kilometers. The default unit can be changed by
-setting the unit parameter to a member of ``haversine.Unit``
-(e.g. ``haversine.Unit.INCHES``), or, equivalently, to a string containing the
-corresponding abbreviation (e.g. 'in'). All available units can be found in the ``Unit`` enum.
-    """
+:return: distance as float
+"""
 def haversine(point1, point2, unit=Unit.KILOMETERS, normalize=False, check=True):
 
     # unpack latitude/longitude
@@ -218,9 +322,6 @@ def haversine_vector(array1, array2, unit=Unit.KILOMETERS, comb=False, normalize
     '''
     The exact same function as "haversine", except that this
     version replaces math functions with numpy functions.
-    This may make it slightly slower for computing the haversine
-    distance between two points, but is much faster for computing
-    the distance between two vectors of points due to vectorization.
     '''
     if not has_numpy:
         raise RuntimeError('Error, unable to import Numpy, '
