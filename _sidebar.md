@@ -26,32 +26,23 @@
     - <span class="xp-unrendered" data-path=".git/logs/HEAD">HEAD</span>
   - **objects**
     - **07**
-      - <span class="xp-unrendered" data-path=".git/objects/07/3660e66a2bc538df819c35773f11bf0dafa38b">3660e66a2bc538df819c35773f11bf0dafa38b</span>
       - <span class="xp-unrendered" data-path=".git/objects/07/fc867e289b2faa6c5b005d4e4bb6f63af2e867">fc867e289b2faa6c5b005d4e4bb6f63af2e867</span>
     - **08**
       - <span class="xp-unrendered" data-path=".git/objects/08/bcad84a3b0b5e5bfdb70db56b4493a5b4fa1e4">bcad84a3b0b5e5bfdb70db56b4493a5b4fa1e4</span>
+    - **09**
+      - <span class="xp-unrendered" data-path=".git/objects/09/c4240578f79a19d8774020547bd192f9c6d016">c4240578f79a19d8774020547bd192f9c6d016</span>
+    - **0d**
+      - <span class="xp-unrendered" data-path=".git/objects/0d/f1127d3dd1c7d711f9108bf3988a517b43354e">f1127d3dd1c7d711f9108bf3988a517b43354e</span>
     - **10**
       - <span class="xp-unrendered" data-path=".git/objects/10/52741565dfb6bfb434cc5e66fc684c8d871af9">52741565dfb6bfb434cc5e66fc684c8d871af9</span>
-      - <span class="xp-unrendered" data-path=".git/objects/10/b94c1919f6543c8cf5cb98cc55ff407c9bf59e">b94c1919f6543c8cf5cb98cc55ff407c9bf59e</span>
-    - **13**
-      - <span class="xp-unrendered" data-path=".git/objects/13/c03d7cf1fa1aa2ff9b64b6f62a0cffedf4efb5">c03d7cf1fa1aa2ff9b64b6f62a0cffedf4efb5</span>
     - **15**
-      - <span class="xp-unrendered" data-path=".git/objects/15/4bfc51cb27ea04bf4fe7cee2d1db1ede473a19">4bfc51cb27ea04bf4fe7cee2d1db1ede473a19</span>
       - <span class="xp-unrendered" data-path=".git/objects/15/9b61edeae99a942d6ea76b6a310f88d705f79d">9b61edeae99a942d6ea76b6a310f88d705f79d</span>
-    - **16**
-      - <span class="xp-unrendered" data-path=".git/objects/16/99f82e154e0e252b5ce31c7955b614f4aed0d4">99f82e154e0e252b5ce31c7955b614f4aed0d4</span>
     - **1f**
       - <span class="xp-unrendered" data-path=".git/objects/1f/78c840cf6377eb5ff322bfae0f8913f33716e9">78c840cf6377eb5ff322bfae0f8913f33716e9</span>
-    - **29**
-      - <span class="xp-unrendered" data-path=".git/objects/29/4a5f5c30828ab13c9fdb24bd30ef1d4e42bb13">4a5f5c30828ab13c9fdb24bd30ef1d4e42bb13</span>
     - **2a**
       - <span class="xp-unrendered" data-path=".git/objects/2a/9acf13daa95e85642ea255d3e3bd1ef8252804">9acf13daa95e85642ea255d3e3bd1ef8252804</span>
-    - **2e**
-      - <span class="xp-unrendered" data-path=".git/objects/2e/65efe2a145dda7ee51d1741299f848e5bf752e">65efe2a145dda7ee51d1741299f848e5bf752e</span>
     - **31**
       - <span class="xp-unrendered" data-path=".git/objects/31/a2bc3381849b41520d1ee4cf0af342cf61fbbb">a2bc3381849b41520d1ee4cf0af342cf61fbbb</span>
-    - **33**
-      - <span class="xp-unrendered" data-path=".git/objects/33/fabf4dc4daab987f6f9752885c54c892eb74f9">fabf4dc4daab987f6f9752885c54c892eb74f9</span>
     - **37**
       - <span class="xp-unrendered" data-path=".git/objects/37/23a77017b1fe012ed3b9621003f1e7556b58dd">23a77017b1fe012ed3b9621003f1e7556b58dd</span>
     - **39**
@@ -61,57 +52,34 @@
     - **3e**
       - <span class="xp-unrendered" data-path=".git/objects/3e/58a350ce7aeb1badb9dbecf5e7c9cb10b2e6ed">58a350ce7aeb1badb9dbecf5e7c9cb10b2e6ed</span>
       - <span class="xp-unrendered" data-path=".git/objects/3e/bfa018a46e31275f1714360df557ef8d16f107">bfa018a46e31275f1714360df557ef8d16f107</span>
-    - **43**
-      - <span class="xp-unrendered" data-path=".git/objects/43/a4868d54de851732a338a41c217abd2fd2e0c6">a4868d54de851732a338a41c217abd2fd2e0c6</span>
     - **48**
       - <span class="xp-unrendered" data-path=".git/objects/48/4eb7830bd88d78bfe52625b082372e1e1f8d39">4eb7830bd88d78bfe52625b082372e1e1f8d39</span>
-    - **55**
-      - <span class="xp-unrendered" data-path=".git/objects/55/637779ca300cb2b19199cdea94abe350ecdf1d">637779ca300cb2b19199cdea94abe350ecdf1d</span>
-    - **63**
-      - <span class="xp-unrendered" data-path=".git/objects/63/d8dbd40c23542e740659a7168a0ce3138ea748">d8dbd40c23542e740659a7168a0ce3138ea748</span>
+    - **64**
+      - <span class="xp-unrendered" data-path=".git/objects/64/66409ca203caa685beca048e49ec982c327339">66409ca203caa685beca048e49ec982c327339</span>
     - **6d**
       - <span class="xp-unrendered" data-path=".git/objects/6d/4ec6da0bc8501dbf66b7d9c0b17d250451627d">4ec6da0bc8501dbf66b7d9c0b17d250451627d</span>
-      - <span class="xp-unrendered" data-path=".git/objects/6d/ee02f8786842ac4459e9aeb447f37d62f20cb6">ee02f8786842ac4459e9aeb447f37d62f20cb6</span>
     - **75**
       - <span class="xp-unrendered" data-path=".git/objects/75/9c252916be13715024b61a9d7e5e1a20c8de2f">9c252916be13715024b61a9d7e5e1a20c8de2f</span>
     - **77**
-      - <span class="xp-unrendered" data-path=".git/objects/77/984b018a94f271e4ec467c77136ce374f736c8">984b018a94f271e4ec467c77136ce374f736c8</span>
-    - **7e**
-      - <span class="xp-unrendered" data-path=".git/objects/7e/bb63d2dcb0d9eda6d5d6d14d7cb6060f3c4a9f">bb63d2dcb0d9eda6d5d6d14d7cb6060f3c4a9f</span>
-    - **81**
-      - <span class="xp-unrendered" data-path=".git/objects/81/e6da7b778bd4c484dfa2f02c8793ed8c670c45">e6da7b778bd4c484dfa2f02c8793ed8c670c45</span>
-    - **82**
-      - <span class="xp-unrendered" data-path=".git/objects/82/5533e337fa1d8e6fccfe70318c4abf52600d25">5533e337fa1d8e6fccfe70318c4abf52600d25</span>
+      - <span class="xp-unrendered" data-path=".git/objects/77/fae14397e3e2bf3347c0b35f0591defc62bd35">fae14397e3e2bf3347c0b35f0591defc62bd35</span>
     - **88**
       - <span class="xp-unrendered" data-path=".git/objects/88/3936d54ef59505df469ba2b7377658f4821533">3936d54ef59505df469ba2b7377658f4821533</span>
     - **8b**
       - <span class="xp-unrendered" data-path=".git/objects/8b/3601322d2981278def44b2e67757844179222e">3601322d2981278def44b2e67757844179222e</span>
     - **96**
+      - <span class="xp-unrendered" data-path=".git/objects/96/0435420b3ee4b6aa2fe5adaf2884774e9ef0b3">0435420b3ee4b6aa2fe5adaf2884774e9ef0b3</span>
       - <span class="xp-unrendered" data-path=".git/objects/96/4376324bcd9d3cbadf8a8ab501e8daf7bd5212">4376324bcd9d3cbadf8a8ab501e8daf7bd5212</span>
     - **a2**
       - <span class="xp-unrendered" data-path=".git/objects/a2/3fc1882ca279f0e6e90f16532d4581b95d13c8">3fc1882ca279f0e6e90f16532d4581b95d13c8</span>
-      - <span class="xp-unrendered" data-path=".git/objects/a2/d953c65c1f15dd92cd3a349f0fa13093fd0f58">d953c65c1f15dd92cd3a349f0fa13093fd0f58</span>
-    - **aa**
-      - <span class="xp-unrendered" data-path=".git/objects/aa/eb544930ff60a5e120683cf30d7288e005cbac">eb544930ff60a5e120683cf30d7288e005cbac</span>
-    - **c7**
-      - <span class="xp-unrendered" data-path=".git/objects/c7/cd4944ebae14a6a78c795293d765b374b02352">cd4944ebae14a6a78c795293d765b374b02352</span>
+    - **a4**
+      - <span class="xp-unrendered" data-path=".git/objects/a4/5b6f18031d57540324a2d27a96c735c6083c52">5b6f18031d57540324a2d27a96c735c6083c52</span>
     - **cb**
       - <span class="xp-unrendered" data-path=".git/objects/cb/a92d3400eebf7b17f91e5d2fae156ea3996f44">a92d3400eebf7b17f91e5d2fae156ea3996f44</span>
     - **d1**
       - <span class="xp-unrendered" data-path=".git/objects/d1/110a17cc2c8a309cdd17cdae4e58349b26aedb">110a17cc2c8a309cdd17cdae4e58349b26aedb</span>
       - <span class="xp-unrendered" data-path=".git/objects/d1/3c20afe7dd2014b8d0f96680031812523979a6">3c20afe7dd2014b8d0f96680031812523979a6</span>
-    - **d7**
-      - <span class="xp-unrendered" data-path=".git/objects/d7/87bc4d1dc3417121bf6a080e2f4b1514c5d6c3">87bc4d1dc3417121bf6a080e2f4b1514c5d6c3</span>
-    - **db**
-      - <span class="xp-unrendered" data-path=".git/objects/db/58043d6aee17158f52e14cd88dd886b2d86fde">58043d6aee17158f52e14cd88dd886b2d86fde</span>
-    - **df**
-      - <span class="xp-unrendered" data-path=".git/objects/df/536fd40d2bea4148535882dcbc7ef8a2ff841b">536fd40d2bea4148535882dcbc7ef8a2ff841b</span>
     - **e6**
       - <span class="xp-unrendered" data-path=".git/objects/e6/9de29bb2d1d6434b8b29ae775ad8c2e48c5391">9de29bb2d1d6434b8b29ae775ad8c2e48c5391</span>
-    - **f2**
-      - <span class="xp-unrendered" data-path=".git/objects/f2/7ffd6b1927e9dad2ee4328f4392bd3143ab116">7ffd6b1927e9dad2ee4328f4392bd3143ab116</span>
-    - **f6**
-      - <span class="xp-unrendered" data-path=".git/objects/f6/912595a3ebc2993aa4bfe644f149a2c82cb0f5">912595a3ebc2993aa4bfe644f149a2c82cb0f5</span>
   - **refs**
     - **heads**
       - <span class="xp-unrendered" data-path=".git/refs/heads/main">main</span>
@@ -129,17 +97,6 @@
   - [__init__.py](haversine/__init__.py.md)
   - [haversine.py](haversine/haversine.py.md)
   - [haversine2.py](haversine/haversine2.py.md)
-- **local**
-  - [test2.txt](local/test2.txt.md)
-- **node_modules**
-  - **ignore**
-    - [index.d.ts](node_modules/ignore/index.d.ts.md)
-    - [index.js](node_modules/ignore/index.js.md)
-    - [legacy.js](node_modules/ignore/legacy.js.md)
-    - <span class="xp-unrendered" data-path="node_modules/ignore/LICENSE-MIT">LICENSE-MIT</span>
-    - <span class="xp-unrendered" data-path="node_modules/ignore/package.json">package.json</span>
-    - [README.md](node_modules/ignore/README.md)
-  - <span class="xp-unrendered" data-path="node_modules/.package-lock.json">.package-lock.json</span>
 - **tests**
   - [__init__.py](tests/__init__.py.md)
   - [geo_ressources.py](tests/geo_ressources.py.md)
@@ -150,13 +107,5 @@
   - [test_inverse_haversine.py](tests/test_inverse_haversine.py.md)
   - [test_performance.py](tests/test_performance.py.md)
 - [CHANGELOG.md](CHANGELOG.md)
-- [cli.js](cli.js.md)
-- <span class="xp-unrendered" data-path="ghmd-dark.css">ghmd-dark.css</span>
-- <span class="xp-unrendered" data-path="ghmd-light.css">ghmd-light.css</span>
-- <span class="xp-unrendered" data-path="index.template.html">index.template.html</span>
-- <span class="xp-unrendered" data-path="LICENSE">LICENSE</span>
-- <span class="xp-unrendered" data-path="Makefile">Makefile</span>
-- <span class="xp-unrendered" data-path="package-lock.json">package-lock.json</span>
-- <span class="xp-unrendered" data-path="package.json">package.json</span>
-- <span class="xp-unrendered" data-path="Pipfile">Pipfile</span>
 - [README.md](/)
+- [setup.py](setup.py.md)
