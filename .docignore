@@ -7,3 +7,6 @@ setup.py
 
 # File patterns
 *.lock
+*.cfg
+.gitignore
+.docignore
