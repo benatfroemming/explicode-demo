@@ -1,10 +1,4 @@
-.github/
-
-*.lock
-*.cfg
-.gitignore
-.docignore
-
+.*
 Pipfile
 Makefile
 LICENSE
