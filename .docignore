@@ -1,0 +1,9 @@
+.github/
+test/
+
+# Specific files
+local/test.txt
+setup.py
+
+# File patterns
+*.lock
