@@ -12,7 +12,5 @@
   - [test_inverse_haversine.py](tests/test_inverse_haversine.py.md)
   - [test_performance.py](tests/test_performance.py.md)
 - [CHANGELOG.md](CHANGELOG.md)
-- <span class="xp-unrendered" data-path="Pipfile.lock">Pipfile.lock</span>
 - [README.md](/)
-- <span class="xp-unrendered" data-path="setup.cfg">setup.cfg</span>
 - [setup.py](setup.py.md)
