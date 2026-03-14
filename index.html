@@ -436,9 +436,13 @@
       markdown: {
         renderer: {
           code(code, lang) {
-            return Prism.highlight
-              ? `<pre data-lang="${lang}"><code class="lang-${lang}">${Prism.highlight(code, Prism.languages[lang] || Prism.languages.plaintext, lang)}</code></pre>`
-              : `<pre data-lang="${lang}"><code class="lang-${lang}">${code}</code></pre>`;
+            const hasLang = lang && Prism.languages[lang];
+            const highlighted = hasLang
+              ? Prism.highlight(code, Prism.languages[lang], lang)
+              : (code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+            const langAttr = hasLang ? ` data-lang="${lang}"` : '';
+            const langClass = lang ? ` class="lang-${lang}"` : '';
+            return `<pre${langAttr}><code${langClass}>${highlighted}</code></pre>`;
           }
         }
       },
