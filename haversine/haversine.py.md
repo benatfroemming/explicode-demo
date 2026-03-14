@@ -1,4 +1,4 @@
-```python
+```python xp-source
 from enum import Enum
 from math import pi
 from typing import Union, Tuple
@@ -13,7 +13,7 @@ Enumeration of supported units.
 The full list can be checked by iterating over the class; e.g.
 the expression `tuple(Unit)`.
 
-```python
+```python xp-source
 class Unit(str, Enum):
     KILOMETERS = 'km'
     METERS = 'm'
@@ -30,7 +30,7 @@ The full list can be checked by iterating over the class; e.g.
 the expression `tuple(Direction)`.
 Angles expressed in radians.
 
-```python
+```python xp-source
 class Direction(float, Enum):
     NORTH = 0.0
     NORTHEAST = pi * 0.25
@@ -61,7 +61,7 @@ def get_avg_earth_radius(unit):
 
 Normalize point to [-90, 90] latitude and [-180, 180] longitude.
 
-```python
+```python xp-source
 def _normalize(lat: float, lon: float) -> Tuple[float, float]:
     lat = (lat + 90) % 360 - 90
     if lat > 90:
@@ -73,7 +73,7 @@ def _normalize(lat: float, lon: float) -> Tuple[float, float]:
 
 Normalize points to [-90, 90] latitude and [-180, 180] longitude.
 
-```python
+```python xp-source
 def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["numpy.ndarray", "numpy.ndarray"]:
     lat = (lat + 90) % 360 - 90
     lon = (lon + 180) % 360 - 180
@@ -86,7 +86,7 @@ def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["nump
 
 Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
 
-```python
+```python xp-source
 def _ensure_lat_lon(lat: float, lon: float):
     if lat < -90 or lat > 90:
         raise ValueError(f"Latitude {lat} is out of range [-90, 90]")
@@ -96,7 +96,7 @@ def _ensure_lat_lon(lat: float, lon: float):
 
 Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
 
-```python
+```python xp-source
 def _ensure_lat_lon_vector(lat: "numpy.ndarray", lon: "numpy.ndarray"):
     if numpy.abs(lat).max() > 90:
         raise ValueError("Latitude(s) out of range [-90, 90]")
@@ -111,7 +111,7 @@ def _explode_args(f):
 Compute the haversine distance on unit sphere.  Inputs are in degrees,
 either scalars (with ops==math) or arrays (with ops==numpy).
 
-```python
+```python xp-source
 @_explode_args
 def _create_haversine_kernel(*, asin=None, arcsin=None, cos, radians, sin, sqrt, **_):
     asin = asin or arcsin
@@ -135,7 +135,7 @@ Compute the inverse haversine on unit sphere.  lat/lng are in degrees,
 direction in radians; all inputs are either scalars (with ops==math) or
 arrays (with ops==numpy).
 
-```python
+```python xp-source
 @_explode_args
 def _create_inverse_haversine_kernel(*, asin=None, arcsin=None, atan2=None, arctan2=None, cos, degrees, radians, sin, sqrt, **_):
     asin = asin or arcsin
@@ -202,7 +202,7 @@ setting the unit parameter to a member of ``haversine.Unit``
 (e.g. ``haversine.Unit.INCHES``), or, equivalently, to a string containing the
 corresponding abbreviation (e.g. 'in'). All available units can be found in the ``Unit`` enum.
 
-```python
+```python xp-source
 def haversine(point1, point2, unit=Unit.KILOMETERS, normalize=False, check=True):
 
     # unpack latitude/longitude
@@ -229,7 +229,7 @@ The exact same function as "haversine", except that this
     distance between two points, but is much faster for computing
     the distance between two vectors of points due to vectorization.
 
-```python
+```python xp-source
 if not has_numpy:
         raise RuntimeError('Error, unable to import Numpy, '
                            'consider using haversine instead of haversine_vector.')

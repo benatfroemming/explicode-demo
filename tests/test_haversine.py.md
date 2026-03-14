@@ -1,4 +1,4 @@
-```python
+```python xp-source
 from haversine import haversine, Unit
 from math import pi
 import pytest
@@ -36,7 +36,7 @@ def test_haversine_deg_rad():
 
 Test makes sure that one time around earth matches sphere circumference in degrees / radians.
 
-```python
+```python xp-source
 p1, p2 = (45, 0), (-45, 180)
     assert haversine(p1, p2, unit=Unit.RADIANS) == pi
     assert round(haversine(p1, p2, unit=Unit.DEGREES), 13) == 180.0
@@ -62,7 +62,7 @@ Test makes sure that normalization works as expected by comparing distance of ou
     results are expected to be equal (within some tolerance to account for numerical
     issues).
 
-```python
+```python xp-source
 normalized_during, normalized_already = (
         haversine(oob_from, oob_to, Unit.DEGREES, normalize=True),
         haversine(proper_from, proper_to, Unit.DEGREES, normalize=True),
@@ -83,7 +83,7 @@ def test_out_of_bounds(oob_from, oob_to):
 
 Test makes sure that a ValueError is raised when latitude or longitude values are out of bounds.
 
-```python
+```python xp-source
 with pytest.raises(ValueError):
         haversine(oob_from, oob_to)
     with pytest.raises(ValueError):
@@ -103,7 +103,7 @@ def test_in_bounds(in_bounds_from, in_bounds_to):
 
 Test makes sure that a ValueError is NOT raised when latitude or longitude values are in bounds.
 
-```python
+```python xp-source
 assert haversine(in_bounds_from, in_bounds_to) > 0
 
 
@@ -113,7 +113,7 @@ def test_haversine_deg_rad_great_circle_distance():
 Test makes sure the haversine functions returns the great circle distance (https://en.wikipedia.org/wiki/Great-circle_distance) between two points on a sphere.
     See https://github.com/mapado/haversine/issues/45
 
-```python
+```python xp-source
 p1, p2 = (0, -45), (0, 45)
     assert haversine(p1, p2, Unit.DEGREES) == 89.99999999999997
 ```

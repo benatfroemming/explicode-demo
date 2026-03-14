@@ -1,4 +1,4 @@
-```python
+```python xp-source
 #
 # NOTE: This is a copy of haversine/haversine.py, 2023-02-28. It is intended
 # to create a baseline for performance regression tests.
@@ -23,7 +23,7 @@ Enumeration of supported units.
     The full list can be checked by iterating over the class; e.g.
     the expression `tuple(Unit)`.
 
-```python
+```python xp-source
 KILOMETERS = 'km'
     METERS = 'm'
     MILES = 'mi'
@@ -42,7 +42,7 @@ Enumeration of supported directions.
     the expression `tuple(Direction)`.
     Angles expressed in radians.
 
-```python
+```python xp-source
 NORTH = 0.0
     NORTHEAST = pi * 0.25
     EAST = pi * 0.5
@@ -75,7 +75,7 @@ def _normalize(lat: float, lon: float) -> Tuple[float, float]:
 
 Normalize point to [-90, 90] latitude and [-180, 180] longitude.
 
-```python
+```python xp-source
 lat = (lat + 90) % 360 - 90
     if lat > 90:
         lat = 180 - lat
@@ -89,7 +89,7 @@ def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["nump
 
 Normalize points to [-90, 90] latitude and [-180, 180] longitude.
 
-```python
+```python xp-source
 lat = (lat + 90) % 360 - 90
     lon = (lon + 180) % 360 - 180
     wrap = lat > 90
@@ -104,7 +104,7 @@ def _ensure_lat_lon(lat: float, lon: float):
 
 Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
 
-```python
+```python xp-source
 if lat < -90 or lat > 90:
         raise ValueError(f"Latitude {lat} is out of range [-90, 90]")
     if lon < -180 or lon > 180:
@@ -116,7 +116,7 @@ def _ensure_lat_lon_vector(lat: "numpy.ndarray", lon: "numpy.ndarray"):
 
 Ensure that the given latitude and longitude have proper values. An exception is raised if they are not.
 
-```python
+```python xp-source
 if numpy.abs(lat).max() > 90:
         raise ValueError("Latitude(s) out of range [-90, 90]")
     if numpy.abs(lon).max() > 180:
@@ -137,7 +137,7 @@ def _create_haversine_kernel(*, asin=None, arcsin=None, cos, radians, sin, sqrt,
 Compute the haversine distance on unit sphere.  Inputs are in degrees,
         either scalars (with ops==math) or arrays (with ops==numpy).
 
-```python
+```python xp-source
 lat1 = radians(lat1)
         lng1 = radians(lng1)
         lat2 = radians(lat2)
@@ -165,7 +165,7 @@ Compute the inverse haversine on unit sphere.  lat/lng are in degrees,
         direction in radians; all inputs are either scalars (with ops==math) or
         arrays (with ops==numpy).
 
-```python
+```python xp-source
 lat = radians(lat)
         lng = radians(lng)
         cos_d, sin_d = cos(d), sin(d)
@@ -229,7 +229,7 @@ Calculate the great-circle distance between two points on the Earth surface.
     (e.g. ``haversine.Unit.INCHES``), or, equivalently, to a string containing the
     corresponding abbreviation (e.g. 'in'). All available units can be found in the ``Unit`` enum.
 
-```python
+```python xp-source
 # unpack latitude/longitude
     lat1, lng1 = point1
     lat2, lng2 = point2
@@ -254,7 +254,7 @@ The exact same function as "haversine", except that this
     distance between two points, but is much faster for computing
     the distance between two vectors of points due to vectorization.
 
-```python
+```python xp-source
 if not has_numpy:
         raise RuntimeError('Error, unable to import Numpy, '
                            'consider using haversine instead of haversine_vector.')

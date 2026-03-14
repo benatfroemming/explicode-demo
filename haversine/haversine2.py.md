@@ -1,4 +1,4 @@
-```python
+```python xp-source
 from enum import Enum
 from math import pi
 from typing import Union, Tuple
@@ -38,7 +38,7 @@ class Unit(str, Enum):
     DEGREES = 'deg'
 ```
 
-```python
+```python xp-source
 class Unit(str, Enum):
     KILOMETERS = 'km'
     METERS = 'm'
@@ -69,7 +69,7 @@ Angles are expressed in **radians**, measured clockwise from North.
 
 Can be iterated: `tuple(Direction)` returns all supported directions.
 
-```python
+```python xp-source
 class Direction(float, Enum):
     NORTH = 0.0
     NORTHEAST = pi * 0.25
@@ -109,7 +109,7 @@ Handles pole-crossing by reflecting latitude and shifting longitude by 180°.
 - **Input**: `lat` (float), `lon` (float) — raw coordinate values (may be out of range)
 - **Output**: `(lat, lon)` tuple — normalized coordinates
 
-```python
+```python xp-source
 def _normalize(lat: float, lon: float) -> Tuple[float, float]:
     lat = (lat + 90) % 360 - 90
     if lat > 90:
@@ -133,7 +133,7 @@ longitudes are shifted by 180°.
 - **Input**: `lat` (ndarray), `lon` (ndarray)
 - **Output**: `(lat, lon)` tuple of normalized ndarrays
 
-```python
+```python xp-source
 def _normalize_vector(lat: "numpy.ndarray", lon: "numpy.ndarray") -> Tuple["numpy.ndarray", "numpy.ndarray"]:
     lat = (lat + 90) % 360 - 90
     lon = (lon + 180) % 360 - 180
@@ -155,7 +155,7 @@ Raises a `ValueError` if:
 - **Input**: `lat` (float), `lon` (float)
 - **Output**: `None` (raises on invalid input)
 
-```python
+```python xp-source
 def _ensure_lat_lon(lat: float, lon: float):
     if lat < -90 or lat > 90:
         raise ValueError(f"Latitude {lat} is out of range [-90, 90]")
@@ -173,7 +173,7 @@ or any value in `lon` is outside `[-180, 180]`.
 - **Input**: `lat` (ndarray), `lon` (ndarray)
 - **Output**: `None` (raises on invalid input)
 
-```python
+```python xp-source
 def _ensure_lat_lon_vector(lat: "numpy.ndarray", lon: "numpy.ndarray"):
     if numpy.abs(lat).max() > 90:
         raise ValueError("Latitude(s) out of range [-90, 90]")
@@ -203,7 +203,7 @@ d = 2 * arcsin(sqrt(sin²(Δlat/2) + cos(lat1) * cos(lat2) * sin²(Δlon/2)))
 - **Input**: `ops` — object with math functions (`sin`, `cos`, `asin`/`arcsin`, `sqrt`, `radians`)
 - **Output**: `_haversine_kernel(lat1, lng1, lat2, lng2)` — angular distance in radians
 
-```python
+```python xp-source
 @_explode_args
 def _create_haversine_kernel(*, asin=None, arcsin=None, cos, radians, sin, sqrt, **_):
     asin = asin or arcsin
@@ -240,7 +240,7 @@ where `φ` = latitude, `λ` = longitude, `d` = angular distance, `θ` = bearing.
 - **Input**: `ops` — object with math functions (`sin`, `cos`, `asin`/`arcsin`, `atan2`/`arctan2`, `degrees`, `radians`)
 - **Output**: `_inverse_haversine_kernel(lat, lng, direction, d)` — `(lat, lon)` of destination in degrees
 
-```python
+```python xp-source
 @_explode_args
 def _create_inverse_haversine_kernel(*, asin=None, arcsin=None, atan2=None, arctan2=None, cos, degrees, radians, sin, sqrt, **_):
     asin = asin or arcsin
@@ -311,7 +311,7 @@ haversine((45.7597, 4.8422), (48.8567, 2.3508), unit='m')
 # 392217.2595594006
 ```
 
-```python
+```python xp-source
 def haversine(point1, point2, unit=Unit.KILOMETERS, normalize=False, check=True):
 
     # unpack latitude/longitude
@@ -360,7 +360,7 @@ haversine_vector([(0, 0)], [(1, 1), (2, 2)], comb=True)
 > Requires NumPy. Raises `RuntimeError` if NumPy is unavailable.
 > Optionally accelerated by Numba if installed.
 
-```python
+```python xp-source
 def haversine_vector(array1, array2, unit=Unit.KILOMETERS, comb=False, normalize=False, check=True):
     if not has_numpy:
         raise RuntimeError('Error, unable to import Numpy, '
@@ -432,7 +432,7 @@ inverse_haversine((0, 0), 111.195, Direction.EAST)
 # (0.0, 1.0)  — ~1 degree east along the equator
 ```
 
-```python
+```python xp-source
 def inverse_haversine(point, distance, direction: Union[Direction, float], unit=Unit.KILOMETERS, normalize_output=False):
     lat, lng = point
     r = get_avg_earth_radius(unit)
@@ -474,7 +474,7 @@ inverse_haversine_vector(points, dists, dirs)
 > Requires NumPy. Raises `RuntimeError` if NumPy is unavailable.
 > Optionally accelerated by Numba if installed.
 
-```python
+```python xp-source
 def inverse_haversine_vector(array, distance, direction, unit=Unit.KILOMETERS, normalize_output=False): # -> Tuple["numpy.ndarray", "numpy.ndarray"]:
     if not has_numpy:
         raise RuntimeError('Error, unable to import Numpy, '

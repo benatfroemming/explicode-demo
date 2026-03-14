@@ -1,4 +1,4 @@
-```python
+```python xp-source
 from haversine import inverse_haversine, haversine, Unit, Direction
 from numpy import isclose
 from math import pi

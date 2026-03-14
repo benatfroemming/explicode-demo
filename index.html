@@ -436,13 +436,15 @@
       markdown: {
         renderer: {
           code(code, lang) {
-            const hasLang = lang && Prism.languages[lang];
+            const isSource = lang?.includes('xp-source');
+            const realLang = lang?.replace('xp-source', '').trim() || '';
+            const hasLang = realLang && Prism.languages[realLang];
             const highlighted = hasLang
-              ? Prism.highlight(code, Prism.languages[lang], lang)
+              ? Prism.highlight(code, Prism.languages[realLang], realLang)
               : (code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
-            const langAttr = hasLang ? ` data-lang="${lang}"` : '';
-            const langClass = lang ? ` class="lang-${lang}"` : '';
-            return `<pre${langAttr}><code${langClass}>${highlighted}</code></pre>`;
+            const attrs = hasLang ? ` data-lang="${realLang}"` : '';
+            const cls = isSource ? ` class="xp-source-block"` : '';
+            return `<pre${attrs}${cls}><code class="lang-${realLang}">${highlighted}</code></pre>`;
           }
         }
       },
