@@ -11,6 +11,11 @@
     @media screen and (max-width: 599px) {
       body.close .sidebar { pointer-events: none !important; }
     }
+    /* Active sub-heading: blue text only, no background, no highlight */
+    .app-sub-sidebar li.active > a {
+      color: #58a6ff !important;
+      background: none !important;
+    }
   </style>
 </head>
 <body>
@@ -72,7 +77,6 @@
             if (content) content.style.left = '';
           } else {
             var w = parseInt(sidebar.style.width) || sidebar.offsetWidth || 270;
-            // Animate drag left from 0 → w in sync with sidebar sliding in
             drag.style.transition = animate ? 'left ' + TRANSITION + ', opacity ' + TRANSITION : 'none';
             drag.style.left = w + 'px';
             drag.style.opacity = '1';
@@ -92,7 +96,6 @@
             toggle.style.transition = 'left ' + dur;
             toggle.style.left = '0px';
             if (content) { content.style.transition = 'left ' + dur; content.style.left = '0'; }
-            // Animate drag left from w → 0 in sync with sidebar sliding out
             drag.style.transition = animate ? 'left ' + TRANSITION + ', opacity ' + TRANSITION : 'none';
             drag.style.left = '0px';
             drag.style.opacity = '0';
@@ -419,13 +422,24 @@
           a.insertBefore(icon, a.firstChild);
         });
 
-        // FIX 1 & 2: Flatten app-sub-sidebar — two-pass: capture depth first, then move
+        // ── Flatten app-sub-sidebar ──────────────────────────────────────────
+        // Docsify renders subMaxLevel headings as nested ULs inside .app-sub-sidebar.
+        // Structure before flattening (subMaxLevel 3):
+        //   <ul>            ← root of .app-sub-sidebar (depth-counting stops here)
+        //     <li>h2</li>   ← parentElement is root UL → 1 UL counted → subtract 1 → depth 0 → '#'
+        //     <li>          ← h2 with h3 children
+        //       <ul>
+        //         <li>h3</li> ← 2 ULs counted → subtract 1 → depth 1 → '##'
+        //       </ul>
+        //     </li>
+        //   </ul>
+        // We capture depth BEFORE moving nodes (parent chain intact), then flatten.
         nav.querySelectorAll('.app-sub-sidebar').forEach(function(sub) {
           if (sub.dataset.xpFlat) return;
           sub.dataset.xpFlat = '1';
           var allLis = Array.from(sub.querySelectorAll('li'));
 
-          // PASS 1: capture depth BEFORE moving anything (parent chain intact)
+          // Pass 1 — record depth while original nesting is intact.
           allLis.forEach(function(li) {
             var depth = 0;
             var el = li.parentElement;
@@ -433,17 +447,22 @@
               if (el.tagName === 'UL') depth++;
               el = el.parentElement;
             }
-            li.dataset.xpHeadingDepth = depth; // 0 = h2 (top-level), 1 = h3, etc.
+            // Every li sits in at least one UL (the sub's own root UL) which we counted,
+            // so subtract 1 so the top-level h2 lis start at depth 0.
+            li.dataset.xpHeadingDepth = Math.max(0, depth - 1);
           });
 
-          // PASS 2: now move them to the root of sub
+          // Pass 2 — move all lis to the sub root.
           allLis.forEach(function(li) { sub.appendChild(li); });
 
-          // remove now-empty nested uls
+          // Remove now-empty nested ULs.
           sub.querySelectorAll('ul').forEach(function(ul) { ul.remove(); });
         });
 
-        // # depth prefix for sub-headings
+        // Add '#' depth prefix to each sub-heading anchor.
+        // depth 0 → '#'  (h2)
+        // depth 1 → '##' (h3)
+        // depth 2 → '###'(h4)
         nav.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
           if (a.dataset.xpIcon) return;
           a.dataset.xpIcon = '1';
@@ -455,7 +474,13 @@
           a.insertBefore(prefix, a.firstChild);
         });
 
-        // Collapsible sub-headings per file
+        // ── Sub-heading toggle per file ──────────────────────────────────────
+        // • Always initialises CLOSED on first render.
+        // • The toggle button is created only once (guarded by xpToggle data attr)
+        //   so the click listener is never duplicated across re-renders — this was
+        //   the cause of the toggle "stopping working" after navigation.
+        // • On subsequent renders we leave display and button state untouched so the
+        //   user's open/close choice is preserved.
         nav.querySelectorAll('a').forEach(function(a) {
           if (a.closest('.app-sub-sidebar')) return;
           var li = a.closest('li');
@@ -463,17 +488,15 @@
           var subSidebar = li.querySelector('.app-sub-sidebar');
           if (!subSidebar) return;
 
-          // FIX 1: Show sub-sidebar for the active file, hide for others
-          var isActiveLi = li.classList.contains('active');
-          subSidebar.style.display = isActiveLi ? '' : 'none';
-
           if (!li.dataset.xpToggle) {
+            // First render only: create button and start closed.
             li.dataset.xpToggle = '1';
+            subSidebar.style.display = 'none';
+
             var toggleBtn = document.createElement('button');
             toggleBtn.className = 'xp-sub-toggle';
             toggleBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3.5l3 3 3-3"/></svg>';
-            // Set initial open state to match visibility
-            if (isActiveLi) toggleBtn.classList.add('xp-sub-toggle-open');
+
             toggleBtn.addEventListener('click', function(e) {
               e.preventDefault();
               e.stopPropagation();
@@ -481,16 +504,78 @@
               subSidebar.style.display = isOpen ? 'none' : '';
               toggleBtn.classList.toggle('xp-sub-toggle-open', !isOpen);
             });
+
             li.style.position = 'relative';
             li.appendChild(toggleBtn);
-          } else {
-            // Update existing toggle button state on re-render
-            var existingToggle = li.querySelector('.xp-sub-toggle');
-            if (existingToggle) {
-              existingToggle.classList.toggle('xp-sub-toggle-open', isActiveLi);
+          }
+          // Subsequent renders: do nothing — preserve user's toggle state.
+        });
+
+        // ── Keep file li always selected; highlight current heading in blue ──
+        // Docsify adds/removes .active on sub-heading lis as the user scrolls or
+        // clicks anchors, and removes it from the file li. We correct this:
+        // 1. Find the file li that owns the current page (it may have lost .active).
+        // 2. Ensure it keeps .active.
+        // 3. Strip .active from all its sub-heading lis (no highlight background).
+        // 4. Re-apply .active to the one sub-heading li whose anchor matches the
+        //    current URL fragment — CSS gives it blue text with no background.
+
+        // Find the current file li. It will either still have .active, or a sub-heading
+        // li inside it will — Docsify always marks at least one of the two.
+        var currentFileLi = null;
+
+        // Try file li directly active (normal navigation).
+        var directActive = nav.querySelector('li.active:not(.app-sub-sidebar li)');
+        if (directActive) {
+          currentFileLi = directActive;
+        } else {
+          // Docsify moved active to a sub-heading li; find owning file li.
+          var activeSubLi = nav.querySelector('.app-sub-sidebar li.active');
+          if (activeSubLi) {
+            var ownerSub = activeSubLi.closest('.app-sub-sidebar');
+            if (ownerSub) currentFileLi = ownerSub.closest('li');
+          }
+        }
+
+        if (currentFileLi) {
+          // Ensure the file li is active.
+          currentFileLi.classList.add('active');
+
+          // Clear all sub-heading active states first.
+          currentFileLi.querySelectorAll('.app-sub-sidebar li').forEach(function(sli) {
+            sli.classList.remove('active');
+          });
+
+          // Re-apply active to the sub-heading whose anchor matches the URL fragment.
+          var rawHash = window.location.hash; // e.g. '#/guide/intro?id=section-one' or '#section-one'
+          if (rawHash) {
+            // Docsify uses ?id= for heading anchors when loadSidebar is on.
+            var fragment = '';
+            var idMatch = rawHash.match(/[?&]id=([^&]*)/);
+            if (idMatch) {
+              fragment = idMatch[1];
+            } else {
+              // Fallback: plain hash fragment after the last #.
+              fragment = rawHash.replace(/^.*#/, '');
+            }
+            if (fragment) {
+              currentFileLi.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
+                var href = a.getAttribute('href') || '';
+                // Match either ?id=fragment or #fragment at end of href.
+                var hrefId = '';
+                var hrefIdMatch = href.match(/[?&]id=([^&]*)/);
+                if (hrefIdMatch) {
+                  hrefId = hrefIdMatch[1];
+                } else {
+                  hrefId = href.replace(/^.*#/, '');
+                }
+                if (hrefId && hrefId === fragment) {
+                  a.closest('li').classList.add('active');
+                }
+              });
             }
           }
-        });
+        }
 
         // Unrendered file GitHub links
         if (githubBase) {
@@ -501,18 +586,6 @@
               window.open(githubBase + '/' + span.dataset.path, '_blank', 'noopener noreferrer');
             });
           });
-        }
-
-        // FIX 3: Re-activate the parent file li when a sub-heading anchor is active
-        var activeSubAnchor = nav.querySelector('.app-sub-sidebar li.active > a');
-        if (activeSubAnchor) {
-          var owningSubSidebar = activeSubAnchor.closest('.app-sub-sidebar');
-          if (owningSubSidebar) {
-            var fileLi = owningSubSidebar.closest('li');
-            if (fileLi && !fileLi.classList.contains('active')) {
-              fileLi.classList.add('active');
-            }
-          }
         }
       });
     };
