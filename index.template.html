@@ -12,19 +12,18 @@
     }
 
     /* ── Chevron toggle ───────────────────────────────────────────────
-       .xp-sidebar-scroll has padding-right:4px (scrollbar zone) in the
-       CSS file. The anchor has margin-right:8px. The chevron sits at
-       right:2px on the li — inside the anchor's margin zone, never
-       covered by the scrollbar at any sidebar width including 100vw.
-       padding-right on the anchor keeps filename text clear of it.    */
+       Sits in a dedicated zone to the right of the filename. The anchor
+       has margin-right:8px which reserves this space. The chevron is
+       centered in that zone at right:2px with a bit of horizontal
+       padding so it feels like a small dedicated button area.          */
     .sidebar ul li > a { padding-right: 22px !important; }
 
     .xp-chevron {
       position: absolute;
-      right: 2px;
+      right: 4px;
       top: 0;
       height: 28px;
-      width: 18px;
+      width: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -32,13 +31,17 @@
       cursor: pointer;
       background: none;
       border: none;
-      padding: 0;
+      border-radius: 4px;
+      padding: 0 3px;
       z-index: 2;
-      transition: color 0.15s;
+      transition: color 0.15s, background 0.12s;
     }
-    .xp-chevron:hover { color: #8b949e; }
+    .xp-chevron:hover { color: #8b949e; background: rgba(177,186,196,0.1); }
     .xp-chevron svg { display: block; flex-shrink: 0; transition: transform 0.18s ease; }
     .xp-chevron.open svg { transform: rotate(90deg); }
+
+    /* Light theme chevron hover */
+    body.light .xp-chevron:hover { background: rgba(208,215,222,0.4); }
 
     /* ── Heading panel ────────────────────────────────────────────────
        margin-right:8px matches the anchor's own margin-right so the
@@ -94,7 +97,6 @@
 
     /* ── Light theme ──────────────────────────────────────────────── */
     body.light .xp-chevron { color: #8c959f; }
-    body.light .xp-chevron:hover { color: #57606a; }
 
     body.light .xp-headings { border-left-color: #d0d7de; }
 
@@ -257,6 +259,8 @@
             });
             // Keep file li active — never let heading click affect it
             fileLi.classList.add('active');
+            // Close sidebar on mobile just like file link clicks do
+            if (isMobile()) setOpen(false, true);
           });
 
           panel.appendChild(item);
