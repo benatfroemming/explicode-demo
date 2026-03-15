@@ -5,6 +5,8 @@ Calculate the distance (in various units) between two points on Earth using thei
 
 [Go to main file](haversine/haversine2.py)
 
+> Note:
+
 ## Installation
 
 ```sh
