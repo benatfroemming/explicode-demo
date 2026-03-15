@@ -1,4 +1,4 @@
-```python xp-source
+```python
 from haversine import haversine_vector, Unit
 from numpy.testing import assert_allclose
 import pytest
@@ -41,7 +41,7 @@ Test makes sure that normalization works as expected by comparing distance of ou
     results are expected to be equal (within some tolerance to account for numerical
     issues).
 
-```python xp-source
+```python
 normalized_during, normalized_already = (
         haversine_vector([oob_from], [oob_to], Unit.DEGREES, normalize=True),
         haversine_vector([proper_from], [proper_to],
@@ -63,7 +63,7 @@ def test_out_of_bounds(oob_from, oob_to):
 
 Test makes sure that a ValueError is raised when latitude or longitude values are out of bounds.
 
-```python xp-source
+```python
 with pytest.raises(ValueError):
         haversine_vector([oob_from], [oob_to])
     with pytest.raises(ValueError):

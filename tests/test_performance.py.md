@@ -1,4 +1,4 @@
-```python xp-source
+```python
 from .  import haversine_baseline as baseline
 import haversine as current
 import numpy as np

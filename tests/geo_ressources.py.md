@@ -1,4 +1,4 @@
-```python xp-source
+```python
 from haversine import Unit
 
 LYON = (45.7597, 4.8422)

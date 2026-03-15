@@ -1,4 +1,4 @@
-```python xp-source
+```python
 from setuptools import setup
 
 setup(
