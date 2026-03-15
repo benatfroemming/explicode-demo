@@ -11,11 +11,46 @@
       body.close .sidebar { pointer-events: none !important; }
     }
 
-    /* ── Heading panel ────────────────────────────────────────────── */
+    /* ── Chevron toggle ───────────────────────────────────────────────
+       The anchor in ghmd.css has `margin-right: 8px`, so the anchor box
+       ends 8px before the li edge. The chevron must live INSIDE that 8px
+       gap — we place it at right: 0 on the li (= the anchor's right margin
+       zone) so it never sits on top of any text, even when the sidebar is
+       full-screen width on mobile.
+       We also cap the anchor's own right padding so long filenames
+       truncate cleanly before the chevron zone.                        */
+    .sidebar ul li > a { padding-right: 20px !important; }
+
+    .xp-chevron {
+      position: absolute;
+      right: 0;          /* lives in the anchor's margin-right:8px gap   */
+      top: 0;
+      height: 28px;      /* matches the anchor row height (5px+5px pad + 13px font + line-height) */
+      width: 22px;       /* wide enough to tap comfortably on mobile      */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #484f58;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      z-index: 2;
+      transition: color 0.15s;
+    }
+    .xp-chevron:hover { color: #8b949e; }
+    .xp-chevron svg { display: block; flex-shrink: 0; transition: transform 0.18s ease; }
+    .xp-chevron.open svg { transform: rotate(90deg); }
+
+    /* ── Heading panel ────────────────────────────────────────────────
+       Left-border aligns under the file icon (16px anchor padding +
+       6px icon = ~22px; we use 22px margin-left).
+       Right margin matches the anchor's margin-right so items don't
+       bleed to the sidebar edge.                                       */
     .xp-headings {
       display: none;
       flex-direction: column;
-      margin: 2px 8px 6px 28px;
+      margin: 2px 8px 6px 22px;
       border-left: 1px solid #21262d;
       padding: 2px 0;
     }
@@ -25,71 +60,56 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 3px 10px;
+      padding: 4px 8px 4px 10px;
+      margin-right: 0;
       font-size: 12px;
       color: #6e7681;
       text-decoration: none;
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color 0.1s, background 0.1s;
       line-height: 1.4;
+      min-width: 0;           /* required for flex child truncation        */
+      transition: color 0.1s, background 0.1s;
     }
-    .xp-heading-item:hover { color: #c9d1d9; background: rgba(177,186,196,0.06); }
+    .xp-heading-item:hover { background: rgba(177,186,196,0.08); }
     .xp-heading-item.active { color: #58a6ff; }
-    .xp-heading-item.active:hover { background: rgba(177,186,196,0.06); }
+    .xp-heading-item.active:hover { color: #79b8ff; background: rgba(56,139,253,0.06); }
 
+    /* '#' marker */
     .xp-heading-hash {
-      font-family: ui-monospace, monospace;
+      font-family: ui-monospace, SFMono-Regular, monospace;
       font-size: 10px;
-      color: #30363d;
+      color: #3d444d;
       flex-shrink: 0;
       user-select: none;
+      line-height: 1;
+      transition: color 0.1s;
     }
-    .xp-heading-item.active .xp-heading-hash { color: #1f6feb; }
+    .xp-heading-item:hover .xp-heading-hash { color: #6e7681; }
+    .xp-heading-item.active .xp-heading-hash { color: #388bfd; }
 
-    /* ── Toggle chevron on file li ────────────────────────────────── */
-    /* Anchor gets right padding so text never slides under the chevron */
-    .sidebar-nav li > a { padding-right: 26px !important; }
-
-    .xp-chevron {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #484f58;
-      cursor: pointer;
-      border-radius: 3px;
-      flex-shrink: 0;
-      transition: color 0.15s;
-      background: none;
-      border: none;
-      padding: 0;
-      z-index: 2;
+    /* label truncates, never wraps */
+    .xp-heading-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
-    .xp-chevron:hover { color: #8b949e; }
-    .xp-chevron svg { transition: transform 0.2s; }
-    .xp-chevron.open svg { transform: rotate(90deg); }
 
-    /* file li needs position for the absolute chevron */
-    .sidebar-nav li { position: relative; }
-
-    /* Light theme overrides */
-    body.light .xp-headings { border-left-color: #d0d7de; }
-    body.light .xp-heading-item { color: #57606a; }
-    body.light .xp-heading-item:hover { color: #1f2328; background: rgba(208,215,222,0.2); }
-    body.light .xp-heading-item.active { color: #0969da; }
-    body.light .xp-heading-hash { color: #d0d7de; }
-    body.light .xp-heading-item.active .xp-heading-hash { color: #a8c7f7; }
+    /* ── Light theme ──────────────────────────────────────────────── */
     body.light .xp-chevron { color: #8c959f; }
     body.light .xp-chevron:hover { color: #57606a; }
+
+    body.light .xp-headings { border-left-color: #d0d7de; }
+
+    body.light .xp-heading-item { color: #8c959f; }
+    body.light .xp-heading-item:hover { background: rgba(208,215,222,0.32); }
+    body.light .xp-heading-item.active { color: #0969da; }
+    body.light .xp-heading-item.active:hover { color: #0550ae; background: rgba(9,105,218,0.06); }
+
+    body.light .xp-heading-hash { color: #c8cdd3; }
+    body.light .xp-heading-item:hover .xp-heading-hash { color: #8c959f; }
+    body.light .xp-heading-item.active .xp-heading-hash { color: #6aabff; }
   </style>
 </head>
 <body>
@@ -204,12 +224,11 @@
 
           var hash = document.createElement('span');
           hash.className = 'xp-heading-hash';
-          hash.textContent = '#';
+          hash.textContent = '#'.repeat(h.level);
 
           var label = document.createElement('span');
+          label.className = 'xp-heading-label';
           label.textContent = h.text;
-          label.style.overflow = 'hidden';
-          label.style.textOverflow = 'ellipsis';
 
           item.appendChild(hash);
           item.appendChild(label);
