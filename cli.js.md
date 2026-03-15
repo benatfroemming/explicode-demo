@@ -1,4 +1,4 @@
-```javascript
+```javascript xp-source
 #!/usr/bin/env node
 'use strict';
 ```
@@ -11,7 +11,7 @@ Usage:
   node cli.js build [--dark]
   node cli.js convert <file>
 
-```javascript
+```javascript xp-source
 const fs   = require('fs');
 const path = require('path');
 const ignore = require('ignore');
@@ -199,8 +199,8 @@ function segmentsToMarkdown(segments, language) {
   return segments
     .map(seg =>
       seg.type === 'doc'
-        ? seg.content   
-        : '```' + prismLang + '\n' + seg.content + '\n```'
+        ? seg.content
+        : '```' + prismLang + ' xp-source\n' + seg.content + '\n```'
     )
     .join('\n\n');
 }
