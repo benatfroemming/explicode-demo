@@ -51,9 +51,12 @@
     .xp-heading-item.active .xp-heading-hash { color: #1f6feb; }
 
     /* ── Toggle chevron on file li ────────────────────────────────── */
+    /* Anchor gets right padding so text never slides under the chevron */
+    .sidebar-nav li > a { padding-right: 26px !important; }
+
     .xp-chevron {
       position: absolute;
-      right: 10px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
       width: 16px;
@@ -65,17 +68,17 @@
       cursor: pointer;
       border-radius: 3px;
       flex-shrink: 0;
-      transition: color 0.15s, transform 0.2s;
+      transition: color 0.15s;
       background: none;
       border: none;
       padding: 0;
-      /* sits above the anchor but doesn't block it */
       z-index: 2;
     }
     .xp-chevron:hover { color: #8b949e; }
-    .xp-chevron.open { transform: translateY(-50%) rotate(90deg); }
+    .xp-chevron svg { transition: transform 0.2s; }
+    .xp-chevron.open svg { transform: rotate(90deg); }
 
-    /* file li needs position for the chevron */
+    /* file li needs position for the absolute chevron */
     .sidebar-nav li { position: relative; }
 
     /* Light theme overrides */
@@ -207,8 +210,6 @@
           label.textContent = h.text;
           label.style.overflow = 'hidden';
           label.style.textOverflow = 'ellipsis';
-          // Indent h3/h4 slightly
-          if (h.level >= 3) item.style.paddingLeft = (10 + (h.level - 2) * 10) + 'px';
 
           item.appendChild(hash);
           item.appendChild(label);
