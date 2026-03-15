@@ -13,7 +13,7 @@ import math
 _AVG_EARTH_RADIUS_KM = 6371.0088
 ```
 
-## Unit
+# Unit
 
 Enumeration of supported distance units for haversine calculations.
 
