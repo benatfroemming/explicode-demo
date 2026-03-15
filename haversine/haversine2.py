@@ -1,6 +1,7 @@
 """
 # Haversine
 [Back](/#contributing-info)
+[Back](/#contributing-inf)
 """
 
 from enum import Enum

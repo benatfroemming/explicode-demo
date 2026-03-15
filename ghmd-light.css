@@ -68,11 +68,21 @@ body.close .content { left: 0; }
 .xp-folder-btn .xp-folder-icon { color: #8c959f; }
 .xp-folder-btn:hover .xp-folder-icon { color: #57606a; }
 .app-sub-sidebar { margin: 1px 0 3px 0 !important; padding-left: 0 !important; border-left: 1px solid #d0d7de !important; margin-left: 21px !important; }
-.app-sub-sidebar li > a { padding: 4px 8px !important; font-size: 12px !important; color: #8c959f !important; display: flex !important; align-items: center !important; gap: 5px !important; }
-.app-sub-sidebar li > a:hover { color: #57606a !important; background: rgba(208,215,222,0.2) !important; }
-.app-sub-sidebar li.active > a { color: #0969da !important; }
-.app-sub-sidebar .xp-item-icon { color: #b1bac4; }
-.app-sub-sidebar li.active > a .xp-hash-icon { color: #0969da; }
+
+/* h2 */
+.app-sub-sidebar > li > a { padding: 4px 8px !important; font-size: 12px !important; color: #8c959f !important; display: flex !important; align-items: center !important; gap: 5px !important; }
+.app-sub-sidebar > li > a:hover { color: #57606a !important; background: rgba(208,215,222,0.2) !important; }
+.app-sub-sidebar > li.active > a { color: #0969da !important; }
+.app-sub-sidebar > li > a .xp-hash-icon { color: #b1bac4; }
+.app-sub-sidebar > li.active > a .xp-hash-icon { color: #0969da; }
+
+/* h3 */
+.app-sub-sidebar > li > ul { border-left: none !important; margin-left: 0 !important; }
+.app-sub-sidebar > li > ul > li > a { padding: 3px 8px 3px 20px !important; font-size: 11px !important; color: #b1bac4 !important; display: flex !important; align-items: center !important; gap: 5px !important; }
+.app-sub-sidebar > li > ul > li > a:hover { color: #8c959f !important; background: rgba(208,215,222,0.12) !important; }
+.app-sub-sidebar > li > ul > li.active > a { color: #0969da !important; }
+.app-sub-sidebar > li > ul > li > a .xp-hash-icon { color: #d0d7de; }
+.app-sub-sidebar > li > ul > li.active > a .xp-hash-icon { color: #0969da; }
 .xp-drag { position: fixed; top: 0; left: 270px; width: 6px; height: 100%; cursor: col-resize; z-index: 25; background: rgba(140,149,159,0.2); }
 .xp-drag:hover, .xp-drag:active { background: rgba(9,105,218,0.4); }
 #xp-toggle { position: fixed; top: 50%; left: 269px; transform: translateY(-50%); z-index: 26; width: 16px; height: 48px; background: #eaeef2; border: 1px solid rgba(27,31,35,0.15); border-left: none; border-radius: 0 6px 6px 0; cursor: pointer; color: #57606a; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s; }
