@@ -24,7 +24,7 @@ body.close .content { left: 0; }
 #xp-sidebar-close:hover { color: #1f2328; background: rgba(208,215,222,0.32); }
 @media screen and (max-width: 599px) { #xp-sidebar-close { display: flex; align-items: center; justify-content: center; } }
 
-.xp-sidebar-scroll { flex: 1; overflow-y: auto; padding: 24px 0 8px; min-height: 0; }
+.xp-sidebar-scroll { flex: 1; overflow-y: auto; padding: 24px 0 8px; min-height: 0; padding-right: 4px; }
 .xp-sidebar-scroll .sidebar-nav { margin-left: 8px; padding-bottom: 16px; }
 .xp-sidebar-scroll::-webkit-scrollbar { width: 4px; }
 .xp-sidebar-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; }
@@ -61,7 +61,7 @@ body.close .content { left: 0; }
 .xp-folder-closed { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1Z'/%3E%3C/svg%3E"); }
 
 /* Sidebar file links — margin-right reserves space for the chevron */
-.sidebar ul li a { color: #57606a; font-size: 13px; padding: 5px 8px 5px 16px; margin-right: 28px; border-radius: 6px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; transition: background 0.1s, color 0.1s; }
+.sidebar ul li a { color: #57606a; font-size: 13px; padding: 5px 8px 5px 16px; margin-right: 8px; border-radius: 6px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; transition: background 0.1s, color 0.1s; }
 .sidebar ul li a:hover { background: rgba(208,215,222,0.32); color: #1f2328; }
 .sidebar ul li.active > a { background: rgba(208,215,222,0.48); color: #1f2328; }
 .sidebar ul li { position: relative; }
@@ -161,9 +161,6 @@ span.xp-unrendered:hover { color: #8c959f; cursor: pointer; }
 
 @media screen and (max-width: 599px) {
   .sidebar { position: fixed; width: 100vw !important; z-index: 30; }
-  /* On mobile full-screen sidebar, restore normal margin-right so the
-     chevron (positioned absolute within the li) never gets clipped     */
-  .sidebar ul li a { margin-right: 8px; }
   .content { left: 0 !important; padding-top: 56px; }
   .xp-drag { display: none !important; }
 }
