@@ -83,10 +83,10 @@ body.close .content { left: 0; }
 .sidebar ul li > a { padding-right: 22px !important; }
 
 /* ── Chevron badge ── */
-.xp-chevron { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); height: 16px; width: 16px; display: flex; align-items: center; justify-content: center; color: #8c959f; cursor: pointer; background: rgba(140,149,159,0.1); border: 1px solid rgba(140,149,159,0.2); border-radius: 4px; padding: 0; z-index: 2; transition: color 0.15s, background 0.15s, border-color 0.15s; }
-.xp-chevron:hover { color: #57606a; background: rgba(140,149,159,0.2); border-color: rgba(140,149,159,0.35); }
-.sidebar ul li.active .xp-chevron { color: #0969da; background: rgba(9,105,218,0.08); border-color: rgba(9,105,218,0.2); }
-.sidebar ul li.active .xp-chevron:hover { background: rgba(9,105,218,0.15); border-color: rgba(9,105,218,0.3); }
+.xp-chevron { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); height: 16px; width: 16px; display: flex; align-items: center; justify-content: center; color: #b1bac4; cursor: pointer; background: none; border: none; padding: 0; z-index: 2; transition: color 0.15s; }
+.xp-chevron:hover { color: #8c959f; }
+.sidebar ul li.active .xp-chevron { color: #8c959f; }
+.sidebar ul li.active .xp-chevron:hover { color: #57606a; }
 .xp-chevron svg { display: block; flex-shrink: 0; transition: transform 0.18s ease; }
 .xp-chevron.open svg { transform: rotate(90deg); }
 
