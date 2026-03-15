@@ -59,7 +59,9 @@ body.close .content { left: 0; }
 .xp-hash-icon  { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.368 1.01a.75.75 0 0 1 .623.859L6.57 4h3.98l.46-2.868a.75.75 0 0 1 1.48.237L12.07 4h2.18a.75.75 0 0 1 0 1.5h-2.42l-.64 4h2.31a.75.75 0 0 1 0 1.5h-2.55l-.46 2.869a.75.75 0 0 1-1.48-.237l.42-2.632H5.45l-.46 2.869a.75.75 0 0 1-1.48-.237L3.93 11H1.75a.75.75 0 0 1 0-1.5h2.42l.64-4H2.5a.75.75 0 0 1 0-1.5h2.55l.46-2.868a.75.75 0 0 1 .858-.622ZM9.309 9.5l.64-4H5.969l-.64 4Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.368 1.01a.75.75 0 0 1 .623.859L6.57 4h3.98l.46-2.868a.75.75 0 0 1 1.48.237L12.07 4h2.18a.75.75 0 0 1 0 1.5h-2.42l-.64 4h2.31a.75.75 0 0 1 0 1.5h-2.55l-.46 2.869a.75.75 0 0 1-1.48-.237l.42-2.632H5.45l-.46 2.869a.75.75 0 0 1-1.48-.237L3.93 11H1.75a.75.75 0 0 1 0-1.5h2.42l.64-4H2.5a.75.75 0 0 1 0-1.5h2.55l.46-2.868a.75.75 0 0 1 .858-.622ZM9.309 9.5l.64-4H5.969l-.64 4Z'/%3E%3C/svg%3E"); }
 .xp-folder-open   { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M.513 1.513A1.75 1.75 0 0 1 1.75 1h3.5c.55 0 1.07.26 1.4.7l.9 1.2a.25.25 0 0 0 .2.1H14.25c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75c0-.464.184-.91.513-1.237ZM1.75 2.5a.25.25 0 0 0-.25.25v.5h13V4.75a.25.25 0 0 0-.25-.25H7.75A1.75 1.75 0 0 1 6.35 3.8l-.9-1.2a.25.25 0 0 0-.2-.1H1.75Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M.513 1.513A1.75 1.75 0 0 1 1.75 1h3.5c.55 0 1.07.26 1.4.7l.9 1.2a.25.25 0 0 0 .2.1H14.25c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75c0-.464.184-.91.513-1.237ZM1.75 2.5a.25.25 0 0 0-.25.25v.5h13V4.75a.25.25 0 0 0-.25-.25H7.75A1.75 1.75 0 0 1 6.35 3.8l-.9-1.2a.25.25 0 0 0-.2-.1H1.75Z'/%3E%3C/svg%3E"); }
 .xp-folder-closed { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1Z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1Z'/%3E%3C/svg%3E"); }
-.sidebar ul li a { color: #57606a; font-size: 13px; padding: 5px 8px 5px 16px; margin-right: 8px; border-radius: 6px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; transition: background 0.1s, color 0.1s; }
+
+/* Sidebar file links — margin-right reserves space for the chevron */
+.sidebar ul li a { color: #57606a; font-size: 13px; padding: 5px 8px 5px 16px; margin-right: 28px; border-radius: 6px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; transition: background 0.1s, color 0.1s; }
 .sidebar ul li a:hover { background: rgba(208,215,222,0.32); color: #1f2328; }
 .sidebar ul li.active > a { background: rgba(208,215,222,0.48); color: #1f2328; }
 .sidebar ul li { position: relative; }
@@ -156,5 +158,14 @@ span.xp-unrendered:hover { color: #8c959f; cursor: pointer; }
 #xp-gh-page-btn svg { width: 18px; height: 18px; display: block; }
 
 @media screen and (max-width: 1100px) and (min-width: 600px) { .sidebar { width: 240px; } .content { left: 240px; } .xp-drag { left: 240px; } #xp-toggle { left: 239px; } }
-@media screen and (max-width: 599px) { .sidebar { position: fixed; width: 100vw !important; z-index: 30; } .content { left: 0 !important; padding-top: 56px; } .xp-drag { display: none !important; } }
+
+@media screen and (max-width: 599px) {
+  .sidebar { position: fixed; width: 100vw !important; z-index: 30; }
+  /* On mobile full-screen sidebar, restore normal margin-right so the
+     chevron (positioned absolute within the li) never gets clipped     */
+  .sidebar ul li a { margin-right: 8px; }
+  .content { left: 0 !important; padding-top: 56px; }
+  .xp-drag { display: none !important; }
+}
+
 @media print { .sidebar, #xp-toggle, #xp-mobile-btn, .xp-drag, .app-nav, #xp-gh-page-btn { display: none !important; } .content { left: 0 !important; } }
