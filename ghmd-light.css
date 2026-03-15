@@ -161,8 +161,11 @@ span.xp-unrendered:hover { color: #8c959f; cursor: pointer; }
 
 @media screen and (max-width: 599px) {
   .sidebar { position: fixed; width: 100vw !important; z-index: 30; }
-  .content { left: 0 !important; padding-top: 56px; }
+  .content { left: 0 !important; padding-top: 56px; overflow-x: hidden; }
   .xp-drag { display: none !important; }
+  /* Hide body scrollbar while mobile sidebar is open so it doesn't
+     bleed through the sidebar's right edge                           */
+  body:not(.close) { overflow: hidden; }
 }
 
 @media print { .sidebar, #xp-toggle, #xp-mobile-btn, .xp-drag, .app-nav, #xp-gh-page-btn { display: none !important; } .content { left: 0 !important; } }
