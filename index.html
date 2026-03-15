@@ -361,38 +361,53 @@
           li.dataset.xpFolder = '1';
           subUl.setAttribute('data-xp-folder-ul', '1');
 
-          var btn = document.createElement('button');
-          btn.className = 'xp-folder-btn';
+          var folderBtn = document.createElement('button');
+          folderBtn.className = 'xp-folder-btn';
           var iconSpan = document.createElement('span');
           var labelSpan = document.createElement('span');
           labelSpan.className = 'xp-folder-label';
           labelSpan.textContent = folderName;
-          btn.appendChild(iconSpan);
-          btn.appendChild(labelSpan);
+          folderBtn.appendChild(iconSpan);
+          folderBtn.appendChild(labelSpan);
 
           var wrapper = labelEl.closest('p') || labelEl;
-          li.insertBefore(btn, wrapper);
+          li.insertBefore(folderBtn, wrapper);
           wrapper.remove();
 
-          // add to closedFolders so it starts closed
           if (!seenFolders.has(folderName)) {
             seenFolders.add(folderName);
             closedFolders.add(folderName);
           }
           var folderOpen = !closedFolders.has(folderName);
-          btn.setAttribute('data-open', folderOpen ? 'true' : 'false');
+          folderBtn.setAttribute('data-open', folderOpen ? 'true' : 'false');
           iconSpan.className = 'xp-folder-icon ' + (folderOpen ? 'xp-folder-open' : 'xp-folder-closed');
           subUl.style.display = folderOpen ? '' : 'none';
 
-          btn.addEventListener('click', function() {
-            var nowOpen = btn.getAttribute('data-open') !== 'true';
-            btn.setAttribute('data-open', nowOpen ? 'true' : 'false');
+          folderBtn.addEventListener('click', function() {
+            var nowOpen = folderBtn.getAttribute('data-open') !== 'true';
+            folderBtn.setAttribute('data-open', nowOpen ? 'true' : 'false');
             iconSpan.className = 'xp-folder-icon ' + (nowOpen ? 'xp-folder-open' : 'xp-folder-closed');
             subUl.style.display = nowOpen ? '' : 'none';
             if (nowOpen) closedFolders.delete(folderName);
             else closedFolders.add(folderName);
           });
         });
+
+        // Auto-expand folder containing the active link
+        var activeLink = nav.querySelector('li.active > a');
+        if (activeLink) {
+          var parentUl = activeLink.closest('[data-xp-folder-ul]');
+          while (parentUl) {
+            var folderBtn = parentUl.previousElementSibling;
+            if (folderBtn && folderBtn.classList.contains('xp-folder-btn')) {
+              folderBtn.setAttribute('data-open', 'true');
+              folderBtn.querySelector('.xp-folder-icon').className = 'xp-folder-icon xp-folder-open';
+              parentUl.style.display = '';
+              closedFolders.delete(folderBtn.querySelector('.xp-folder-label').textContent.trim());
+            }
+            parentUl = parentUl.parentElement ? parentUl.parentElement.closest('[data-xp-folder-ul]') : null;
+          }
+        }
 
         // File icons
         nav.querySelectorAll('a').forEach(function(a) {

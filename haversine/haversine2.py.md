@@ -1,5 +1,6 @@
 # Haversine
 [Back](/#contributing-info)
+[Back](/#contributing-inf)
 
 ```python xp-source
 from enum import Enum
