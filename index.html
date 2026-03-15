@@ -419,12 +419,25 @@
           a.insertBefore(icon, a.firstChild);
         });
 
+        // Add # prefix based on heading depth
         nav.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
-          if (a.dataset.xpIcon) return;
-          a.dataset.xpIcon = '1';
-          var icon = document.createElement('span');
-          icon.className = 'xp-item-icon xp-hash-icon';
-          a.insertBefore(icon, a.firstChild);
+          if (a.dataset.xpDepth) return;
+          var depth = 0;
+          var el = a.closest('li');
+          while (el) {
+            var parent = el.parentElement;
+            if (!parent || !parent.closest('.app-sub-sidebar')) break;
+            if (parent.tagName === 'UL') depth++;
+            el = parent.closest('li');
+          }
+          a.dataset.xpDepth = depth;
+          var prefix = document.createElement('span');
+          prefix.className = 'xp-heading-depth';
+          prefix.textContent = '#'.repeat(depth + 1) + ' ';
+          // insert after the hash icon
+          var icon = a.querySelector('.xp-hash-icon');
+          if (icon) icon.after(prefix);
+          else a.insertBefore(prefix, a.firstChild);
         });
 
         // Collapsible sub-headings per file
@@ -437,13 +450,15 @@
 
           // Always start collapsed
           subSidebar.style.display = 'none';
+          var existingToggle = li.querySelector('.xp-sub-toggle');
+          if (existingToggle) existingToggle.classList.remove('xp-sub-toggle-open');
 
           // Add toggle button if not already added
           if (!li.dataset.xpToggle) {
             li.dataset.xpToggle = '1';
             var toggleBtn = document.createElement('button');
             toggleBtn.className = 'xp-sub-toggle';
-            toggleBtn.innerHTML = '&#x203a;'; // ›
+            ttoggleBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 3l4 4 4-4"/></svg>';
             toggleBtn.addEventListener('click', function(e) {
               e.preventDefault();
               e.stopPropagation();
@@ -451,13 +466,14 @@
               subSidebar.style.display = isOpen ? 'none' : '';
               toggleBtn.classList.toggle('xp-sub-toggle-open', !isOpen);
             });
+            a.style.paddingRight = '24px';
             a.parentNode.style.position = 'relative';
             a.parentNode.appendChild(toggleBtn);
           }
 
           // Auto-open for active file
           if (li.classList.contains('active')) {
-            subSidebar.style.display = '';
+            subSidebar.style.display = 'none';
             var btn = li.querySelector('.xp-sub-toggle');
             if (btn) btn.classList.add('xp-sub-toggle-open');
           }
