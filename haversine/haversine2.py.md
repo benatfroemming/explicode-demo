@@ -1,14 +1,20 @@
 # Haversine
-[Back](/#contributing-info)
-[Back](/#contributing-inf)
+[Back](../#contributing-info)
 
 ```python xp-source
 from enum import Enum
 from math import pi
 from typing import Union, Tuple
 import math
+```
 
+![Image](https://picsum.photos/200/300)
 
+hello
+
+![Image](../tests/dog.jpg)
+
+```python xp-source
 # mean earth radius - https://en.wikipedia.org/wiki/Earth_radius#Mean_radius
 _AVG_EARTH_RADIUS_KM = 6371.0088
 ```

@@ -59,6 +59,10 @@ const SUPPORTED_LANGUAGES = new Set([
   'txt',
 ]);
 
+const SUPPORTED_ASSETS = new Set([
+  'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'pdf', 'mp4', 'mp3',
+]);
+
 // Directories to always skip when scanning
 function loadDocIgnore(cwd) {
   const ignorePath = path.join(cwd, '.docignore');
@@ -368,6 +372,16 @@ function build() {
     // Root README was already copied above; just mark it rendered so it gets a sidebar link
     if (relPath === rootReadme) {
       renderedSet.add(relPath);
+      continue;
+    }
+
+    const ext = relPath.split('.').pop()?.toLowerCase() ?? '';
+
+    if (SUPPORTED_ASSETS.has(ext)) {
+      const outPath = path.join(outDir, relPath);
+      fs.mkdirSync(path.dirname(outPath), { recursive: true });
+      fs.copyFileSync(path.join(cwd, relPath), outPath);
+      console.log(`${relPath} -> docs/${relPath} (asset)`);
       continue;
     }
 

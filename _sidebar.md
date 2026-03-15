@@ -12,6 +12,7 @@
     - [README.md](node_modules/ignore/README.md)
 - **tests**
   - [__init__.py](tests/__init__.py.md)
+  - <span class="xp-unrendered" data-path="tests/dog.jpg">dog.jpg</span>
   - [geo_ressources.py](tests/geo_ressources.py.md)
   - [haversine_baseline.py](tests/haversine_baseline.py.md)
   - [test_haversine_vector.py](tests/test_haversine_vector.py.md)
