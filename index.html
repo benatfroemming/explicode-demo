@@ -419,32 +419,36 @@
           a.insertBefore(icon, a.firstChild);
         });
 
-        // Hash icons + # depth prefix for sub-headings
+        // Flatten app-sub-sidebar — move all nested li's to the top ul
+        nav.querySelectorAll('.app-sub-sidebar').forEach(function(sub) {
+          if (sub.dataset.xpFlat) return;
+          sub.dataset.xpFlat = '1';
+          var allLis = Array.from(sub.querySelectorAll('li'));
+          allLis.forEach(function(li) {
+            // compute depth before moving
+            var depth = 0;
+            var el = li;
+            while (el.parentElement && el.parentElement.closest('.app-sub-sidebar')) {
+              if (el.parentElement.tagName === 'UL') depth++;
+              el = el.parentElement;
+            }
+            li.dataset.xpHeadingDepth = depth;
+            sub.appendChild(li);
+          });
+          // remove now-empty nested uls
+          sub.querySelectorAll('ul').forEach(function(ul) { ul.remove(); });
+        });
+
+        // # depth prefix for sub-headings
         nav.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
           if (a.dataset.xpIcon) return;
           a.dataset.xpIcon = '1';
-          var icon = document.createElement('span');
-          icon.className = 'xp-item-icon xp-hash-icon';
-          a.insertBefore(icon, a.firstChild);
-        });
-
-        nav.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
-          if (a.dataset.xpDepth) return;
-          var depth = 0;
-          var el = a.closest('li');
-          while (el) {
-            var parent = el.parentElement;
-            if (!parent || !parent.closest('.app-sub-sidebar')) break;
-            if (parent.tagName === 'UL') depth++;
-            el = parent.closest('li');
-          }
-          a.dataset.xpDepth = depth;
+          var li = a.closest('li');
+          var depth = parseInt(li ? li.dataset.xpHeadingDepth || '0' : '0');
           var prefix = document.createElement('span');
           prefix.className = 'xp-heading-depth';
           prefix.textContent = '#'.repeat(depth + 1);
-          var hashIcon = a.querySelector('.xp-hash-icon');
-          if (hashIcon) hashIcon.after(prefix);
-          else a.insertBefore(prefix, a.firstChild);
+          a.insertBefore(prefix, a.firstChild);
         });
 
         // Collapsible sub-headings per file
@@ -469,7 +473,8 @@
               subSidebar.style.display = isOpen ? 'none' : '';
               toggleBtn.classList.toggle('xp-sub-toggle-open', !isOpen);
             });
-            a.appendChild(toggleBtn);
+            li.style.position = 'relative';
+            li.appendChild(toggleBtn);
           }
         });
 
