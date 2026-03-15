@@ -427,6 +427,42 @@
           a.insertBefore(icon, a.firstChild);
         });
 
+        // Collapsible sub-headings per file
+        nav.querySelectorAll('a').forEach(function(a) {
+          if (a.closest('.app-sub-sidebar')) return;
+          var li = a.closest('li');
+          if (!li) return;
+          var subSidebar = li.querySelector('.app-sub-sidebar');
+          if (!subSidebar) return;
+
+          // Always start collapsed
+          subSidebar.style.display = 'none';
+
+          // Add toggle button if not already added
+          if (!li.dataset.xpToggle) {
+            li.dataset.xpToggle = '1';
+            var toggleBtn = document.createElement('button');
+            toggleBtn.className = 'xp-sub-toggle';
+            toggleBtn.innerHTML = '&#x203a;'; // ›
+            toggleBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              var isOpen = subSidebar.style.display !== 'none';
+              subSidebar.style.display = isOpen ? 'none' : '';
+              toggleBtn.classList.toggle('xp-sub-toggle-open', !isOpen);
+            });
+            a.parentNode.style.position = 'relative';
+            a.parentNode.appendChild(toggleBtn);
+          }
+
+          // Auto-open for active file
+          if (li.classList.contains('active')) {
+            subSidebar.style.display = '';
+            var btn = li.querySelector('.xp-sub-toggle');
+            if (btn) btn.classList.add('xp-sub-toggle-open');
+          }
+        });
+
         // Unrendered file GitHub links
         if (githubBase) {
           nav.querySelectorAll('span.xp-unrendered[data-path]').forEach(function(span) {
