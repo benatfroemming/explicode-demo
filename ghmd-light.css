@@ -181,6 +181,15 @@ span.xp-unrendered:hover { color: #8c959f; cursor: pointer; }
 #xp-gh-page-btn:hover { color: #57606a; transform: scale(1.15); }
 #xp-gh-page-btn svg { width: 18px; height: 18px; display: block; }
 
+.markdown-section img,
+.markdown-section video,
+.markdown-section audio,
+.markdown-section iframe {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @media screen and (max-width: 1100px) and (min-width: 600px) { .sidebar { width: 240px; } .content { left: 240px; } .xp-drag { left: 240px; } #xp-toggle { left: 239px; } }
 
 @media screen and (max-width: 599px) {
