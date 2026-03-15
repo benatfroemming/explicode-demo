@@ -7,19 +7,86 @@
   <link rel="stylesheet" href="ghmd.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
   <style>
-    /* Closed sidebar must never intercept touches on mobile */
     @media screen and (max-width: 599px) {
       body.close .sidebar { pointer-events: none !important; }
     }
-    /* Active sub-heading: blue text only, no background, no row highlight */
-    .app-sub-sidebar li.active > a {
-      color: #58a6ff !important;
-      background: none !important;
+
+    /* ── Heading panel ────────────────────────────────────────────── */
+    .xp-headings {
+      display: none;
+      flex-direction: column;
+      margin: 2px 8px 6px 28px;
+      border-left: 1px solid #21262d;
+      padding: 2px 0;
     }
-    /* Toggle button: small right margin so it doesn't overlap the scroll edge */
-    .xp-sub-toggle {
-      margin-right: 4px;
+    .xp-headings.open { display: flex; }
+
+    .xp-heading-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: #6e7681;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.1s, background 0.1s;
+      line-height: 1.4;
     }
+    .xp-heading-item:hover { color: #c9d1d9; background: rgba(177,186,196,0.06); }
+    .xp-heading-item.active { color: #58a6ff; }
+    .xp-heading-item.active:hover { background: rgba(177,186,196,0.06); }
+
+    .xp-heading-hash {
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      color: #30363d;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .xp-heading-item.active .xp-heading-hash { color: #1f6feb; }
+
+    /* ── Toggle chevron on file li ────────────────────────────────── */
+    .xp-chevron {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #484f58;
+      cursor: pointer;
+      border-radius: 3px;
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.2s;
+      background: none;
+      border: none;
+      padding: 0;
+      /* sits above the anchor but doesn't block it */
+      z-index: 2;
+    }
+    .xp-chevron:hover { color: #8b949e; }
+    .xp-chevron.open { transform: translateY(-50%) rotate(90deg); }
+
+    /* file li needs position for the chevron */
+    .sidebar-nav li { position: relative; }
+
+    /* Light theme overrides */
+    body.light .xp-headings { border-left-color: #d0d7de; }
+    body.light .xp-heading-item { color: #57606a; }
+    body.light .xp-heading-item:hover { color: #1f2328; background: rgba(208,215,222,0.2); }
+    body.light .xp-heading-item.active { color: #0969da; }
+    body.light .xp-heading-hash { color: #d0d7de; }
+    body.light .xp-heading-item.active .xp-heading-hash { color: #a8c7f7; }
+    body.light .xp-chevron { color: #8c959f; }
+    body.light .xp-chevron:hover { color: #57606a; }
   </style>
 </head>
 <body>
@@ -36,6 +103,13 @@
 
       var sidebar, toggle, mobileBtn, drag;
       var sidebarOpen = true;
+
+      // Track which file lis have their heading panel open.
+      // Key = normalized href string, value = true/false.
+      var headingPanelOpen = {};
+
+      // Track the active heading id so we can highlight it.
+      var activeHeadingId = '';
 
       function isMobile() { return window.innerWidth < 600; }
 
@@ -55,7 +129,6 @@
         var mobile = isMobile();
         var dur = animate ? TRANSITION : 'none';
         var content = document.querySelector('.content');
-
         if (open) {
           document.body.classList.remove('close');
           toggle.innerHTML = '&#x2039;';
@@ -67,9 +140,7 @@
           } else {
             var w = parseInt(sidebar.style.width) || sidebar.offsetWidth || 270;
             drag.style.transition = animate ? 'left ' + TRANSITION + ', opacity ' + TRANSITION : 'none';
-            drag.style.left = w + 'px';
-            drag.style.opacity = '1';
-            drag.style.pointerEvents = '';
+            drag.style.left = w + 'px'; drag.style.opacity = '1'; drag.style.pointerEvents = '';
             syncPositions(w, animate);
           }
         } else {
@@ -82,18 +153,133 @@
             if (content) content.style.left = '';
           } else {
             sidebar.style.transition = 'transform ' + dur;
-            toggle.style.transition = 'left ' + dur;
-            toggle.style.left = '0px';
+            toggle.style.transition = 'left ' + dur; toggle.style.left = '0px';
             if (content) { content.style.transition = 'left ' + dur; content.style.left = '0'; }
             drag.style.transition = animate ? 'left ' + TRANSITION + ', opacity ' + TRANSITION : 'none';
-            drag.style.left = '0px';
-            drag.style.opacity = '0';
-            drag.style.pointerEvents = 'none';
+            drag.style.left = '0px'; drag.style.opacity = '0'; drag.style.pointerEvents = 'none';
           }
         }
       }
 
+      // Parse headings out of the rendered markdown content area.
+      // Returns [{id, text, level}, ...] in document order.
+      function getPageHeadings() {
+        var content = document.querySelector('.markdown-section');
+        if (!content) return [];
+        var headings = [];
+        content.querySelectorAll('h1, h2, h3, h4').forEach(function(h) {
+          var id = h.id || h.getAttribute('id') || '';
+          if (!id) {
+            // Docsify sets id on a child <a> sometimes
+            var a = h.querySelector('a[id]');
+            if (a) id = a.id;
+          }
+          var text = h.textContent.trim();
+          if (id && text) {
+            headings.push({ id: id, text: text, level: parseInt(h.tagName[1]) });
+          }
+        });
+        return headings;
+      }
+
+      // Build and inject a heading panel below a file li.
+      // If panel already exists (xp-headings div), replace its contents.
+      function buildHeadingPanel(fileLi, headings, fileKey) {
+        // Remove old panel if present
+        var old = fileLi.querySelector('.xp-headings');
+        if (old) old.remove();
+
+        if (!headings.length) return;
+
+        var panel = document.createElement('div');
+        panel.className = 'xp-headings' + (headingPanelOpen[fileKey] ? ' open' : '');
+
+        headings.forEach(function(h) {
+          var item = document.createElement('a');
+          item.className = 'xp-heading-item' + (h.id === activeHeadingId ? ' active' : '');
+          item.href = 'javascript:void(0)';
+
+          var hash = document.createElement('span');
+          hash.className = 'xp-heading-hash';
+          hash.textContent = '#';
+
+          var label = document.createElement('span');
+          label.textContent = h.text;
+          label.style.overflow = 'hidden';
+          label.style.textOverflow = 'ellipsis';
+          // Indent h3/h4 slightly
+          if (h.level >= 3) item.style.paddingLeft = (10 + (h.level - 2) * 10) + 'px';
+
+          item.appendChild(hash);
+          item.appendChild(label);
+
+          item.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Scroll to heading in content area
+            var target = document.getElementById(h.id);
+            if (!target) {
+              // fallback: find by matching text
+              document.querySelectorAll('.markdown-section h1,h2,h3,h4').forEach(function(el) {
+                if (!target && el.textContent.trim() === h.text) target = el;
+              });
+            }
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              // Update URL hash without triggering Docsify navigation
+              var newHash = window.location.hash.replace(/\?id=.*$/, '') + '?id=' + h.id;
+              history.replaceState(null, '', newHash);
+            }
+            // Update active heading highlight
+            activeHeadingId = h.id;
+            panel.querySelectorAll('.xp-heading-item').forEach(function(el) {
+              el.classList.toggle('active', el === item);
+            });
+            var hashEl = item.querySelector('.xp-heading-hash');
+            panel.querySelectorAll('.xp-heading-hash').forEach(function(el) {
+              el.style.color = '';
+            });
+            // Keep file li active — never let heading click affect it
+            fileLi.classList.add('active');
+          });
+
+          panel.appendChild(item);
+        });
+
+        // Insert panel after the anchor (before any other children like the toggle button)
+        var anchor = fileLi.querySelector(':scope > a');
+        if (anchor && anchor.nextSibling) {
+          fileLi.insertBefore(panel, anchor.nextSibling);
+        } else {
+          fileLi.appendChild(panel);
+        }
+      }
+
+      // Ensure chevron button exists on a file li that has headings.
+      function ensureChevron(fileLi, fileKey) {
+        if (fileLi.querySelector('.xp-chevron')) return;
+        var chevron = document.createElement('button');
+        chevron.className = 'xp-chevron' + (headingPanelOpen[fileKey] ? ' open' : '');
+        chevron.setAttribute('aria-label', 'Toggle headings');
+        chevron.innerHTML = '<svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 1l3 3-3 3"/></svg>';
+
+        chevron.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var panel = fileLi.querySelector('.xp-headings');
+          if (!panel) return;
+          var isOpen = panel.classList.contains('open');
+          panel.classList.toggle('open', !isOpen);
+          chevron.classList.toggle('open', !isOpen);
+          headingPanelOpen[fileKey] = !isOpen;
+        });
+
+        fileLi.appendChild(chevron);
+      }
+
       hook.beforeEach(function(content, next) {
+        // Reset active heading on page navigation
+        activeHeadingId = '';
         var hash = window.location.hash.replace(/^#\/?/, '').replace(/\?.*$/, '');
         if (!hash) {
           currentFilePath = 'README.md';
@@ -143,8 +329,7 @@
         mobileBtn = document.createElement('button');
         mobileBtn.id = 'xp-mobile-btn';
         mobileBtn.setAttribute('aria-label', 'Open sidebar');
-        mobileBtn.innerHTML =
-          '<span class="xp-mb-bars"><span></span><span></span><span></span></span>';
+        mobileBtn.innerHTML = '<span class="xp-mb-bars"><span></span><span></span><span></span></span>';
         document.body.appendChild(mobileBtn);
 
         var closeBtn = document.createElement('button');
@@ -152,37 +337,26 @@
         closeBtn.setAttribute('aria-label', 'Close sidebar');
         closeBtn.innerHTML = '&#x2715;';
         var h1 = sidebar.querySelector('h1');
-        if (h1) {
-          h1.insertBefore(closeBtn, h1.firstChild);
-        } else {
-          sidebar.insertBefore(closeBtn, sidebar.firstChild);
-        }
+        if (h1) { h1.insertBefore(closeBtn, h1.firstChild); }
+        else { sidebar.insertBefore(closeBtn, sidebar.firstChild); }
 
-        closeBtn.addEventListener('click', function() {
-          setOpen(false, true);
-        });
+        closeBtn.addEventListener('click', function() { setOpen(false, true); });
 
         drag = document.createElement('div');
         drag.className = 'xp-drag';
         document.body.appendChild(drag);
 
-        toggle.addEventListener('click', function() {
-          setOpen(!sidebarOpen, true);
-        });
-        mobileBtn.addEventListener('click', function() {
-          setOpen(!sidebarOpen, true);
-        });
+        toggle.addEventListener('click', function() { setOpen(!sidebarOpen, true); });
+        mobileBtn.addEventListener('click', function() { setOpen(!sidebarOpen, true); });
 
-        // Single delegated listener for nav link taps/clicks closing the sidebar on mobile.
         sidebar.addEventListener('click', function(e) {
           if (!isMobile()) return;
           var a = e.target.closest('a');
-          if (a && sidebar.contains(a) && !a.closest('.xp-sidebar-footer')) {
+          if (a && sidebar.contains(a) && !a.closest('.xp-sidebar-footer') && !a.closest('.xp-headings')) {
             setOpen(false, true);
           }
         });
 
-        // Resize handler
         var lastMobile = isMobile();
         window.addEventListener('resize', function() {
           var nowMobile = isMobile();
@@ -196,78 +370,52 @@
               sidebar.style.transform = sidebarOpen ? 'translateX(0)' : 'translateX(-100%)';
               sidebar.style.pointerEvents = sidebarOpen ? '' : 'none';
             } else {
-              sidebar.style.transform = '';
-              sidebar.style.pointerEvents = '';
-              if (sidebarOpen) {
-                syncPositions(w, false);
-              } else {
+              sidebar.style.transform = ''; sidebar.style.pointerEvents = '';
+              if (sidebarOpen) { syncPositions(w, false); }
+              else {
                 var content = document.querySelector('.content');
                 if (content) content.style.left = '0';
                 toggle.style.left = '0px';
               }
             }
-          } else if (!nowMobile && sidebarOpen) {
-            syncPositions(w, false);
-          }
+          } else if (!nowMobile && sidebarOpen) { syncPositions(w, false); }
           drag.style.transition = 'none';
-          if (isMobile()) {
-            drag.style.opacity = '0';
-            drag.style.pointerEvents = 'none';
-          } else if (sidebarOpen) {
-            drag.style.opacity = '1';
-            drag.style.pointerEvents = '';
-          } else {
-            drag.style.left = '0px';
-            drag.style.opacity = '0';
-            drag.style.pointerEvents = 'none';
-          }
+          if (isMobile()) { drag.style.opacity = '0'; drag.style.pointerEvents = 'none'; }
+          else if (sidebarOpen) { drag.style.opacity = '1'; drag.style.pointerEvents = ''; }
+          else { drag.style.left = '0px'; drag.style.opacity = '0'; drag.style.pointerEvents = 'none'; }
         });
 
-        // Initial state
         if (isMobile()) {
-          lastMobile = true;
-          sidebarOpen = false;
-          sidebar.style.transition = 'none';
-          sidebar.style.transform = 'translateX(-100%)';
-          sidebar.style.pointerEvents = 'none';
-          document.body.classList.add('close');
+          lastMobile = true; sidebarOpen = false;
+          sidebar.style.transition = 'none'; sidebar.style.transform = 'translateX(-100%)';
+          sidebar.style.pointerEvents = 'none'; document.body.classList.add('close');
           var content = document.querySelector('.content');
           if (content) content.style.left = '';
-          drag.style.transition = 'none';
-          drag.style.opacity = '0';
-          drag.style.pointerEvents = 'none';
+          drag.style.transition = 'none'; drag.style.opacity = '0'; drag.style.pointerEvents = 'none';
         } else {
           sidebarOpen = true;
           syncPositions(parseInt(sidebar.style.width) || sidebar.offsetWidth || 270, false);
-          drag.style.transition = 'none';
-          drag.style.opacity = '1';
-          drag.style.pointerEvents = '';
+          drag.style.transition = 'none'; drag.style.opacity = '1'; drag.style.pointerEvents = '';
         }
 
-        // Drag to resize (desktop only)
         drag.addEventListener('mousedown', function(e) {
           e.preventDefault();
           var startX = e.clientX;
           var startW = parseInt(sidebar.style.width) || sidebar.offsetWidth || 270;
-          document.body.style.userSelect = 'none';
-          document.body.style.cursor = 'col-resize';
-          sidebar.style.transition = 'none';
-          toggle.style.transition = 'none';
+          document.body.style.userSelect = 'none'; document.body.style.cursor = 'col-resize';
+          sidebar.style.transition = 'none'; toggle.style.transition = 'none';
           var content = document.querySelector('.content');
           if (content) content.style.transition = 'none';
           drag.style.transition = 'none';
-
           function onMove(e) {
             var w = Math.max(180, Math.min(600, startW + e.clientX - startX));
             sidebar.style.width = w + 'px';
-            var content = document.querySelector('.content');
-            if (content) content.style.left = w + 'px';
-            drag.style.left = w + 'px';
-            toggle.style.left = (w - 1) + 'px';
+            var c = document.querySelector('.content');
+            if (c) c.style.left = w + 'px';
+            drag.style.left = w + 'px'; toggle.style.left = (w - 1) + 'px';
           }
           function onUp() {
-            document.body.style.userSelect = '';
-            document.body.style.cursor = '';
+            document.body.style.userSelect = ''; document.body.style.cursor = '';
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('mouseup', onUp);
           }
@@ -285,26 +433,19 @@
 
         if (repoUrl) {
           var h1 = sb.querySelector('h1');
-          if (h1) {
-            var titleA = h1.querySelector('a');
-            if (titleA) titleA.target = '_blank';
-          }
+          if (h1) { var ta = h1.querySelector('a'); if (ta) ta.target = '_blank'; }
         }
 
-        // Ensure scroll wrapper exists
         if (!sb.querySelector('.xp-sidebar-scroll')) {
           var scrollWrap = document.createElement('div');
           scrollWrap.className = 'xp-sidebar-scroll';
           var footer = sb.querySelector('.xp-sidebar-footer');
           Array.from(sb.childNodes).forEach(function(n) {
-            if (!n.classList || !n.classList.contains('xp-sidebar-footer')) {
-              scrollWrap.appendChild(n);
-            }
+            if (!n.classList || !n.classList.contains('xp-sidebar-footer')) scrollWrap.appendChild(n);
           });
           sb.insertBefore(scrollWrap, footer || null);
         }
 
-        // Re-sync desktop drag/toggle positions
         if (!isMobile() && drag && toggle) {
           var w = parseInt(sb.style.width) || sb.offsetWidth || 270;
           drag.style.transition = 'none';
@@ -314,7 +455,6 @@
           toggle.style.left = sidebarOpen ? (w - 1) + 'px' : '0px';
         }
 
-        // GitHub source button
         (function() {
           var existing = document.getElementById('xp-gh-page-btn');
           if (existing) existing.remove();
@@ -322,10 +462,8 @@
           var btn = document.createElement('a');
           btn.id = 'xp-gh-page-btn';
           btn.href = githubBase + '/' + currentFilePath;
-          btn.target = '_blank';
-          btn.rel = 'noopener noreferrer';
-          btn.setAttribute('aria-label', 'View on GitHub');
-          btn.title = 'View on GitHub';
+          btn.target = '_blank'; btn.rel = 'noopener noreferrer';
+          btn.setAttribute('aria-label', 'View on GitHub'); btn.title = 'View on GitHub';
           btn.innerHTML = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>';
           document.body.insertBefore(btn, mobileBtn || null);
         })();
@@ -333,13 +471,12 @@
         var nav = sb.querySelector('.sidebar-nav');
         if (!nav) return;
 
+        // Kill Docsify's own sub-sidebar entirely — we replace it with our system.
+        nav.querySelectorAll('.app-sub-sidebar').forEach(function(el) { el.remove(); });
+
         // Reset Docsify collapse state
-        nav.querySelectorAll('li').forEach(function(li) {
-          li.classList.remove('collapse');
-        });
-        nav.querySelectorAll('li > ul').forEach(function(ul) {
-          ul.style.display = '';
-        });
+        nav.querySelectorAll('li').forEach(function(li) { li.classList.remove('collapse'); });
+        nav.querySelectorAll('li > ul').forEach(function(ul) { ul.style.display = ''; });
 
         // Folder buttons
         nav.querySelectorAll('li').forEach(function(li) {
@@ -348,268 +485,121 @@
           if (!labelEl) return;
           var subUl = li.querySelector(':scope > ul');
           if (!subUl) return;
-
           var folderName = labelEl.textContent.trim();
           li.dataset.xpFolder = '1';
           subUl.setAttribute('data-xp-folder-ul', '1');
-
           var folderBtn = document.createElement('button');
           folderBtn.className = 'xp-folder-btn';
           var iconSpan = document.createElement('span');
           var labelSpan = document.createElement('span');
           labelSpan.className = 'xp-folder-label';
           labelSpan.textContent = folderName;
-          folderBtn.appendChild(iconSpan);
-          folderBtn.appendChild(labelSpan);
-
+          folderBtn.appendChild(iconSpan); folderBtn.appendChild(labelSpan);
           var wrapper = labelEl.closest('p') || labelEl;
-          li.insertBefore(folderBtn, wrapper);
-          wrapper.remove();
-
-          if (!seenFolders.has(folderName)) {
-            seenFolders.add(folderName);
-            closedFolders.add(folderName);
-          }
+          li.insertBefore(folderBtn, wrapper); wrapper.remove();
+          if (!seenFolders.has(folderName)) { seenFolders.add(folderName); closedFolders.add(folderName); }
           var folderOpen = !closedFolders.has(folderName);
           folderBtn.setAttribute('data-open', folderOpen ? 'true' : 'false');
           iconSpan.className = 'xp-folder-icon ' + (folderOpen ? 'xp-folder-open' : 'xp-folder-closed');
           subUl.style.display = folderOpen ? '' : 'none';
-
           folderBtn.addEventListener('click', function() {
             var nowOpen = folderBtn.getAttribute('data-open') !== 'true';
             folderBtn.setAttribute('data-open', nowOpen ? 'true' : 'false');
             iconSpan.className = 'xp-folder-icon ' + (nowOpen ? 'xp-folder-open' : 'xp-folder-closed');
             subUl.style.display = nowOpen ? '' : 'none';
-            if (nowOpen) closedFolders.delete(folderName);
-            else closedFolders.add(folderName);
+            if (nowOpen) closedFolders.delete(folderName); else closedFolders.add(folderName);
           });
         });
-
-        // Auto-expand folder containing the active link
-        var activeLink = nav.querySelector('li.active > a');
-        if (activeLink) {
-          var parentUl = activeLink.closest('[data-xp-folder-ul]');
-          while (parentUl) {
-            var folderBtn = parentUl.previousElementSibling;
-            if (folderBtn && folderBtn.classList.contains('xp-folder-btn')) {
-              folderBtn.setAttribute('data-open', 'true');
-              folderBtn.querySelector('.xp-folder-icon').className = 'xp-folder-icon xp-folder-open';
-              parentUl.style.display = '';
-              closedFolders.delete(folderBtn.querySelector('.xp-folder-label').textContent.trim());
-            }
-            parentUl = parentUl.parentElement ? parentUl.parentElement.closest('[data-xp-folder-ul]') : null;
-          }
-        }
 
         // File icons
         nav.querySelectorAll('a').forEach(function(a) {
           if (a.dataset.xpIcon) return;
-          if (a.closest('.app-sub-sidebar')) return;
           a.dataset.xpIcon = '1';
           var icon = document.createElement('span');
           icon.className = 'xp-item-icon xp-file-icon';
           a.insertBefore(icon, a.firstChild);
         });
 
-        // ── Flatten .app-sub-sidebar & add '#' prefix ────────────────────────
-        //
-        // Docsify's DOM structure for a file li with subMaxLevel=3:
-        //
-        //   <li>                              ← file li
-        //     <a href="...">file.md</a>
-        //     <ul class="app-sub-sidebar">   ← sub root (this IS a UL itself)
-        //       <li><a>H2 heading</a></li>   ← direct child, depth=0
-        //       <li>
-        //         <a>H2 with children</a>
-        //         <ul>
-        //           <li><a>H3 heading</a></li>  ← nested, depth=1
-        //         </ul>
-        //       </li>
-        //     </ul>
-        //   </li>
-        //
-        // THE BUG that caused the first heading to disappear:
-        //   querySelectorAll('li') returns ALL lis including direct children.
-        //   appendChild() on a node that is ALREADY a direct child of sub moves
-        //   it to the END of sub — reordering the list and making the first
-        //   heading appear last (effectively "missing" since it scrolled out of view
-        //   or was treated as a deeper item).
-        //
-        // FIX: only move lis that are NOT already direct children of sub.
-        //   Direct children are already in correct order — leave them alone.
-        //   Only pull up grandchildren (nested lis) to the top level.
-        //   We still do two passes: measure depth first, then move.
-
-        nav.querySelectorAll('.app-sub-sidebar').forEach(function(sub) {
-          // Guard: already processed if first direct-child li has xpProcessed.
-          var firstDirectLi = sub.querySelector(':scope > li');
-          if (firstDirectLi && firstDirectLi.dataset.xpProcessed) return;
-
-          // Collect ALL lis in document order (so we can read their depth).
-          var allLis = Array.from(sub.querySelectorAll('li'));
-
-          // Pass 1: record depth while nesting is intact.
-          // depth = number of UL ancestors between li and sub (exclusive).
-          // Direct child li → 0 (its parent UL is sub itself, not counted).
-          allLis.forEach(function(li) {
-            li.dataset.xpProcessed = '1';
-            var depth = 0;
-            var el = li.parentElement;
-            while (el && el !== sub) {
-              if (el.tagName === 'UL') depth++;
-              el = el.parentElement;
-            }
-            // depth 0 = direct child of sub (H2), depth 1 = H3, etc.
-            li.dataset.xpHeadingDepth = depth;
-          });
-
-          // Pass 2: move only NON-direct-child lis up to sub root.
-          // Direct children (depth=0) are already correct — do not touch them
-          // (appendChild on an existing child reorders it to the end).
-          allLis.forEach(function(li) {
-            if (parseInt(li.dataset.xpHeadingDepth) > 0) {
-              // Find insertion point: insert after the previous sibling li
-              // that was the parent's li in document order.
-              // Simplest correct approach: just append — they'll go after all
-              // current direct children. Since allLis is in document order,
-              // they end up in the right sequence relative to each other.
-              sub.appendChild(li);
-            }
-          });
-
-          // Remove now-empty nested ULs.
-          sub.querySelectorAll('ul').forEach(function(ul) { ul.remove(); });
-        });
-
-        // Add '#' prefix to every sub-heading anchor (once per anchor).
-        nav.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
-          if (a.dataset.xpSubIcon) return;
-          a.dataset.xpSubIcon = '1';
-          var prefix = document.createElement('span');
-          prefix.className = 'xp-heading-depth';
-          prefix.textContent = '#';
-          a.insertBefore(prefix, a.firstChild);
-        });
-
-        // ── Sub-heading toggle ───────────────────────────────────────────────
-        //
-        // Created once per file li (xpToggle guard), always starts CLOSED.
-        //
-        // STALE CLOSURE FIX: do NOT capture subSidebar in the closure at
-        // creation time. Docsify may inject a new .app-sub-sidebar node into
-        // the same li on re-render (though in practice it reuses the node,
-        // the safe approach is to query it live on every click).
-        //
-        // DROPDOWN STOPS WORKING FIX: the previous code set xpToggle on the li
-        // but then re-ran `subSidebar.style.display = 'none'` on every doneEach
-        // via the `if (!li.dataset.xpToggle)` branch — except it didn't, because
-        // the guard prevented re-entry. The actual cause was that the toggle button
-        // was appended INSIDE the li, which is also where .app-sub-sidebar lives.
-        // When Docsify re-renders and injects a fresh .app-sub-sidebar, it appends
-        // it as the last child of the li — AFTER our toggle button. The button's
-        // z-index / pointer-events were then covered by the sub-sidebar ul.
-        // FIX: always append the toggle button LAST (after any sub-sidebar).
-
-        nav.querySelectorAll('li').forEach(function(li) {
-          // Only process file-level lis that have a sub-sidebar and are not
-          // themselves inside a sub-sidebar.
-          if (li.closest('.app-sub-sidebar')) return;
-          var sub = li.querySelector(':scope > .app-sub-sidebar');
-          if (!sub) return;
-
-          if (!li.dataset.xpToggle) {
-            li.dataset.xpToggle = '1';
-            li.style.position = 'relative';
-            sub.style.display = 'none';
-
-            var toggleBtn = document.createElement('button');
-            toggleBtn.className = 'xp-sub-toggle';
-            toggleBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3.5l3 3 3-3"/></svg>';
-
-            toggleBtn.addEventListener('click', function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              // Always query live — never use a stale closure reference.
-              var liveSub = li.querySelector(':scope > .app-sub-sidebar');
-              if (!liveSub) return;
-              var isOpen = liveSub.style.display !== 'none';
-              liveSub.style.display = isOpen ? 'none' : '';
-              toggleBtn.classList.toggle('xp-sub-toggle-open', !isOpen);
-            });
-
-            // Append LAST so it sits on top of everything in the li.
-            li.appendChild(toggleBtn);
-          } else {
-            // On re-renders: ensure the toggle button is still the last child
-            // (Docsify may have appended a fresh sub-sidebar after it).
-            var existingBtn = li.querySelector(':scope > .xp-sub-toggle');
-            if (existingBtn && existingBtn !== li.lastElementChild) {
-              li.appendChild(existingBtn);
-            }
-          }
-        });
-
-        // ── Keep file li always active; heading = blue text only ─────────────
-        //
-        // The problem: Docsify's router, on any hash change (including heading
-        // anchor clicks), calls doneEach. By that point it has already toggled
-        // .active — adding it to the heading li, removing it from the file li.
-        //
-        // Strategy:
-        // 1. Find the file li for the current page by matching href to URL path.
-        //    This works even when Docsify has stripped .active from it.
-        // 2. Force .active onto it unconditionally.
-        // 3. Strip .active from all sub-heading lis (CSS gives active ones blue text).
-        // 4. Re-add .active to the sub-heading li matching the current ?id= fragment
-        //    so the blue text indicator shows the right heading.
-
-        var rawHash = window.location.hash; // e.g. '#/path/to/file?id=heading-slug'
-        // File path part: strip leading #/ and any ?id= query.
+        // ── Active file detection ────────────────────────────────────────────
+        // Parse current URL: file path and heading fragment.
+        var rawHash = window.location.hash;
         var urlFilePath = rawHash.replace(/^#\/?/, '').replace(/\?.*$/, '');
-        // Heading fragment: the ?id= value.
         var urlFragment = (rawHash.match(/[?&]id=([^&]*)/) || [])[1] || '';
+        activeHeadingId = urlFragment;
 
-        // Find the file li whose anchor href matches urlFilePath.
+        // Find the active file li by href matching.
         var currentFileLi = null;
         nav.querySelectorAll('a').forEach(function(a) {
           if (currentFileLi) return;
-          if (a.closest('.app-sub-sidebar')) return;
-          var href = a.getAttribute('href') || '';
-          var hrefPath = href.replace(/^#\/?/, '').replace(/\?.*$/, '');
-          // Match exactly, or match README when path is empty.
-          if (hrefPath === urlFilePath || (!urlFilePath && (hrefPath === 'README' || hrefPath === 'README.md' || hrefPath === ''))) {
+          var href = (a.getAttribute('href') || '').replace(/^#\/?/, '').replace(/\?.*$/, '');
+          if (href === urlFilePath || (!urlFilePath && (!href || href === 'README' || href === 'README.md'))) {
             currentFileLi = a.closest('li');
           }
         });
-
-        // Fallback: if no href match, grab whatever li still has .active
-        // and is not inside a sub-sidebar.
+        // Fallback to whatever Docsify marked active.
         if (!currentFileLi) {
-          nav.querySelectorAll('li.active').forEach(function(li) {
-            if (!currentFileLi && !li.closest('.app-sub-sidebar')) {
-              currentFileLi = li;
-            }
-          });
+          currentFileLi = nav.querySelector('li.active');
         }
 
+        // Force active onto the file li, remove from all others.
+        nav.querySelectorAll('li').forEach(function(li) { li.classList.remove('active'); });
+        if (currentFileLi) currentFileLi.classList.add('active');
+
+        // ── Heading panels ───────────────────────────────────────────────────
+        // For the active file li: read headings from the rendered page and build panel.
+        // For all others: clear any existing panel (file changed).
+        nav.querySelectorAll('a').forEach(function(a) {
+          var li = a.closest('li');
+          if (!li || li.dataset.xpFolder) return;
+          // Skip lis that are inside a folder's sub-ul but aren't file entries
+          // (i.e. they have no direct anchor child pointing to a file).
+          var href = a.getAttribute('href') || '';
+          if (!href) return;
+          var fileKey = href.replace(/^#\/?/, '').replace(/\?.*$/, '');
+
+          if (li === currentFileLi) {
+            // Build heading panel from live DOM.
+            var headings = getPageHeadings();
+            if (headings.length) {
+              buildHeadingPanel(li, headings, fileKey);
+              ensureChevron(li, fileKey);
+            } else {
+              // No headings — remove panel and chevron if present.
+              var p = li.querySelector('.xp-headings'); if (p) p.remove();
+              var c = li.querySelector('.xp-chevron'); if (c) c.remove();
+            }
+          } else {
+            // Not the active file — remove any stale panel/chevron.
+            var p = li.querySelector('.xp-headings'); if (p) p.remove();
+            var c = li.querySelector('.xp-chevron'); if (c) c.remove();
+          }
+        });
+
+        // Auto-expand folder containing the active link.
         if (currentFileLi) {
-          // Force the file li active.
-          currentFileLi.classList.add('active');
+          var parentUl = currentFileLi.closest('[data-xp-folder-ul]');
+          while (parentUl) {
+            var fb = parentUl.previousElementSibling;
+            if (fb && fb.classList.contains('xp-folder-btn')) {
+              fb.setAttribute('data-open', 'true');
+              fb.querySelector('.xp-folder-icon').className = 'xp-folder-icon xp-folder-open';
+              parentUl.style.display = '';
+              closedFolders.delete(fb.querySelector('.xp-folder-label').textContent.trim());
+            }
+            parentUl = parentUl.parentElement ? parentUl.parentElement.closest('[data-xp-folder-ul]') : null;
+          }
+        }
 
-          // Strip active from all sub-heading lis.
-          currentFileLi.querySelectorAll('.app-sub-sidebar li').forEach(function(sli) {
-            sli.classList.remove('active');
-          });
-
-          // Re-apply active to the heading matching the URL fragment (blue text).
-          if (urlFragment) {
-            currentFileLi.querySelectorAll('.app-sub-sidebar a').forEach(function(a) {
-              var href = a.getAttribute('href') || '';
-              var hrefId = (href.match(/[?&]id=([^&]*)/) || [])[1] || '';
-              if (hrefId === urlFragment) {
-                a.closest('li').classList.add('active');
-              }
-            });
+        // Scroll active item into view in sidebar.
+        if (currentFileLi) {
+          var scrollEl = sb.querySelector('.xp-sidebar-scroll');
+          if (scrollEl) {
+            var liTop = currentFileLi.offsetTop;
+            var liH = currentFileLi.offsetHeight;
+            var scrollH = scrollEl.clientHeight;
+            if (liTop < scrollEl.scrollTop || liTop + liH > scrollEl.scrollTop + scrollH) {
+              scrollEl.scrollTop = liTop - scrollH / 3;
+            }
           }
         }
 
@@ -635,7 +625,8 @@
       nameLink: repoUrl || '/',
       repo: '',
       loadSidebar: true,
-      subMaxLevel: 3,
+      // Set subMaxLevel to 0 — we handle headings ourselves, no Docsify sub-sidebar.
+      subMaxLevel: 0,
       auto2top: true,
       plugins: [explicodePlugin, titleLockPlugin],
       markdown: {
