@@ -1,13 +1,21 @@
 """
 # Haversine
-[Back](/#contributing-info)
-[Back](/#contributing-inf)
+[Back](../#contributing-info)
 """
 
 from enum import Enum
 from math import pi
 from typing import Union, Tuple
 import math
+
+
+"""
+![Image](https://picsum.photos/200/300)
+
+hello
+
+![Image](../tests/dog.jpg)
+"""
 
 
 # mean earth radius - https://en.wikipedia.org/wiki/Earth_radius#Mean_radius
