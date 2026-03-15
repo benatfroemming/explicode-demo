@@ -419,22 +419,26 @@
           a.insertBefore(icon, a.firstChild);
         });
 
-        // Flatten app-sub-sidebar — move all nested li's to the top ul
+        // FIX 1 & 2: Flatten app-sub-sidebar — two-pass: capture depth first, then move
         nav.querySelectorAll('.app-sub-sidebar').forEach(function(sub) {
           if (sub.dataset.xpFlat) return;
           sub.dataset.xpFlat = '1';
           var allLis = Array.from(sub.querySelectorAll('li'));
+
+          // PASS 1: capture depth BEFORE moving anything (parent chain intact)
           allLis.forEach(function(li) {
-            // compute depth before moving
             var depth = 0;
-            var el = li;
-            while (el.parentElement && el.parentElement.closest('.app-sub-sidebar')) {
-              if (el.parentElement.tagName === 'UL') depth++;
+            var el = li.parentElement;
+            while (el && el !== sub) {
+              if (el.tagName === 'UL') depth++;
               el = el.parentElement;
             }
-            li.dataset.xpHeadingDepth = depth;
-            sub.appendChild(li);
+            li.dataset.xpHeadingDepth = depth; // 0 = h2 (top-level), 1 = h3, etc.
           });
+
+          // PASS 2: now move them to the root of sub
+          allLis.forEach(function(li) { sub.appendChild(li); });
+
           // remove now-empty nested uls
           sub.querySelectorAll('ul').forEach(function(ul) { ul.remove(); });
         });
@@ -459,13 +463,17 @@
           var subSidebar = li.querySelector('.app-sub-sidebar');
           if (!subSidebar) return;
 
-          subSidebar.style.display = 'none';
+          // FIX 1: Show sub-sidebar for the active file, hide for others
+          var isActiveLi = li.classList.contains('active');
+          subSidebar.style.display = isActiveLi ? '' : 'none';
 
           if (!li.dataset.xpToggle) {
             li.dataset.xpToggle = '1';
             var toggleBtn = document.createElement('button');
             toggleBtn.className = 'xp-sub-toggle';
             toggleBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3.5l3 3 3-3"/></svg>';
+            // Set initial open state to match visibility
+            if (isActiveLi) toggleBtn.classList.add('xp-sub-toggle-open');
             toggleBtn.addEventListener('click', function(e) {
               e.preventDefault();
               e.stopPropagation();
@@ -475,6 +483,12 @@
             });
             li.style.position = 'relative';
             li.appendChild(toggleBtn);
+          } else {
+            // Update existing toggle button state on re-render
+            var existingToggle = li.querySelector('.xp-sub-toggle');
+            if (existingToggle) {
+              existingToggle.classList.toggle('xp-sub-toggle-open', isActiveLi);
+            }
           }
         });
 
@@ -487,6 +501,18 @@
               window.open(githubBase + '/' + span.dataset.path, '_blank', 'noopener noreferrer');
             });
           });
+        }
+
+        // FIX 3: Re-activate the parent file li when a sub-heading anchor is active
+        var activeSubAnchor = nav.querySelector('.app-sub-sidebar li.active > a');
+        if (activeSubAnchor) {
+          var owningSubSidebar = activeSubAnchor.closest('.app-sub-sidebar');
+          if (owningSubSidebar) {
+            var fileLi = owningSubSidebar.closest('li');
+            if (fileLi && !fileLi.classList.contains('active')) {
+              fileLi.classList.add('active');
+            }
+          }
         }
       });
     };
