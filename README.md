@@ -2,6 +2,9 @@
 
 Calculate the distance (in various units) between two points on Earth using their latitude and longitude.
 
+
+[Go to main file](haversine/haversine2.py)
+
 ## Installation
 
 ```sh
@@ -134,7 +137,7 @@ The output array from the example above returns the following table:
 
 By definition, if you have a vector _a_ with _n_ elements, and a vector _b_ with _m_ elements. The result matrix _M_ would be $n x m$ and a element M\[i,j\] from the matrix would be the distance between the ith coordinate from vector _a_ and jth coordinate with vector _b_.
 
-## Contributing
+## Contributing Info
 
 Clone the project.
 
