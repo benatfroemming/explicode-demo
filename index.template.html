@@ -285,6 +285,10 @@
       });
 
       hook.doneEach(function() {
+        Prism.highlightAll();
+      });
+
+      hook.doneEach(function() {
         var sb = document.querySelector('.sidebar');
 
         if (repoUrl) {
@@ -438,13 +442,10 @@
           code(code, lang) {
             const isSource = lang?.includes('xp-source');
             const realLang = lang?.replace('xp-source', '').trim() || '';
-            const hasLang = realLang && Prism.languages[realLang];
-            const highlighted = hasLang
-              ? Prism.highlight(code, Prism.languages[realLang], realLang)
-              : code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             const attrs = realLang ? ` data-lang="${realLang}"` : '';
             const cls = isSource ? ' class="xp-source-block"' : '';
-            return `<pre${attrs}${cls}><code class="lang-${realLang}">${highlighted}</code></pre>`;
+            return `<pre${attrs}${cls}><code class="language-${realLang}">${escaped}</code></pre>`;
           }
         }
       },
