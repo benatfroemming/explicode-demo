@@ -439,18 +439,33 @@
         });
 
         // ── Active file detection ────────────────────────────────────────────
-        // Parse current URL: file path and heading fragment.
+        // Normalize a hash/href string to a canonical key for comparison.
+        // Strips leading #, #/, optional slash, and any ?id= fragment.
+        // Then strips a trailing .md ONLY if the result still contains a dot
+        // before the .md (i.e. foo.py.md → foo.py, but README.md → README.md).
+        function normalizeHref(h) {
+          var s = (h || '').replace(/^#+\/?/, '').replace(/\?.*$/, '').replace(/\/$/, '');
+          // strip trailing .md if it was added by the pipeline (e.g. foo.py.md → foo.py)
+          if (s.endsWith('.md')) {
+            var withoutMd = s.slice(0, -3);
+            // only strip if there's still an extension (foo.py) not a bare name (README)
+            if (withoutMd.indexOf('.') !== -1) s = withoutMd;
+          }
+          return s.toLowerCase();
+        }
+
         var rawHash = window.location.hash;
-        var urlFilePath = rawHash.replace(/^#\/?/, '').replace(/\?.*$/, '');
+        var urlFilePath = normalizeHref(rawHash);
         var urlFragment = (rawHash.match(/[?&]id=([^&]*)/) || [])[1] || '';
         activeHeadingId = urlFragment;
 
-        // Find the active file li by href matching.
+        // Find the active file li by normalized href matching.
         var currentFileLi = null;
         nav.querySelectorAll('a').forEach(function(a) {
           if (currentFileLi) return;
-          var href = (a.getAttribute('href') || '').replace(/^#\/?/, '').replace(/\?.*$/, '');
-          if (href === urlFilePath || (!urlFilePath && (!href || href === 'README' || href === 'README.md'))) {
+          var norm = normalizeHref(a.getAttribute('href') || '');
+          // Match exact path, or match root (empty hash → README)
+          if (norm === urlFilePath || (!urlFilePath && (!norm || norm === 'readme' || norm === 'readme.md'))) {
             currentFileLi = a.closest('li');
           }
         });
@@ -543,8 +558,8 @@
       nameLink: repoUrl || '/',
       repo: '',
       loadSidebar: true,
+      // Set subMaxLevel to 0 — we handle headings ourselves, no Docsify sub-sidebar.
       subMaxLevel: 0,
-      relativePath: true,
       auto2top: true,
       plugins: [explicodePlugin, titleLockPlugin],
       markdown: {
