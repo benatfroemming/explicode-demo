@@ -2,21 +2,21 @@
   - <span class="xp-unrendered" data-path="assets/globe.webp">globe.webp</span>
   - <span class="xp-unrendered" data-path="assets/haversine.png">haversine.png</span>
 - **geo**
-  - [clustering.py](geo/clustering.py.md)
-  - [haversine.py](geo/haversine.py.md)
+  - [clustering.py](/geo/clustering.py.md)
+  - [haversine.py](/geo/haversine.py.md)
 - **node_modules**
   - **ignore**
-    - [index.d.ts](node_modules/ignore/index.d.ts.md)
-    - [index.js](node_modules/ignore/index.js.md)
-    - [legacy.js](node_modules/ignore/legacy.js.md)
+    - [index.d.ts](/node_modules/ignore/index.d.ts.md)
+    - [index.js](/node_modules/ignore/index.js.md)
+    - [legacy.js](/node_modules/ignore/legacy.js.md)
     - <span class="xp-unrendered" data-path="node_modules/ignore/LICENSE-MIT">LICENSE-MIT</span>
     - <span class="xp-unrendered" data-path="node_modules/ignore/package.json">package.json</span>
-    - [README.md](node_modules/ignore/README.md)
+    - [README.md](/node_modules/ignore/README.md)
 - **stats**
-  - [descriptive.py](stats/descriptive.py.md)
-  - [pipeline.py](stats/pipeline.py.md)
-- [CHANGELOG.md](CHANGELOG.md)
-- [cli.js](cli.js.md)
+  - [descriptive.py](/stats/descriptive.py.md)
+  - [pipeline.py](/stats/pipeline.py.md)
+- [CHANGELOG.md](/CHANGELOG.md)
+- [cli.js](/cli.js.md)
 - <span class="xp-unrendered" data-path="ghmd-dark.css">ghmd-dark.css</span>
 - <span class="xp-unrendered" data-path="ghmd-light.css">ghmd-light.css</span>
 - <span class="xp-unrendered" data-path="index.template.html">index.template.html</span>
