@@ -1,31 +1,11 @@
-- **haversine**
-  - [__init__.py](haversine/__init__.py.md)
-  - [haversine.py](haversine/haversine.py.md)
-  - [haversine2.py](haversine/haversine2.py.md)
-- **node_modules**
-  - **ignore**
-    - [index.d.ts](node_modules/ignore/index.d.ts.md)
-    - [index.js](node_modules/ignore/index.js.md)
-    - [legacy.js](node_modules/ignore/legacy.js.md)
-    - <span class="xp-unrendered" data-path="node_modules/ignore/LICENSE-MIT">LICENSE-MIT</span>
-    - <span class="xp-unrendered" data-path="node_modules/ignore/package.json">package.json</span>
-    - [README.md](node_modules/ignore/README.md)
-- **tests**
-  - [__init__.py](tests/__init__.py.md)
-  - <span class="xp-unrendered" data-path="tests/dog.jpg">dog.jpg</span>
-  - [geo_ressources.py](tests/geo_ressources.py.md)
-  - [haversine_baseline.py](tests/haversine_baseline.py.md)
-  - [test_haversine_vector.py](tests/test_haversine_vector.py.md)
-  - [test_haversine.py](tests/test_haversine.py.md)
-  - [test_inverse_haversine_vector.py](tests/test_inverse_haversine_vector.py.md)
-  - [test_inverse_haversine.py](tests/test_inverse_haversine.py.md)
-  - [test_performance.py](tests/test_performance.py.md)
+- **assets**
+  - <span class="xp-unrendered" data-path="assets/globe.webp">globe.webp</span>
+  - <span class="xp-unrendered" data-path="assets/haversine.png">haversine.png</span>
+- **geo**
+  - [clustering.py](geo/clustering.py.md)
+  - [haversine.py](geo/haversine.py.md)
+- **stats**
+  - [descriptive.py](stats/descriptive.py.md)
+  - [pipeline.py](stats/pipeline.py.md)
 - [CHANGELOG.md](CHANGELOG.md)
-- [cli.js](cli.js.md)
-- <span class="xp-unrendered" data-path="ghmd-dark.css">ghmd-dark.css</span>
-- <span class="xp-unrendered" data-path="ghmd-light.css">ghmd-light.css</span>
-- <span class="xp-unrendered" data-path="index.template.html">index.template.html</span>
-- <span class="xp-unrendered" data-path="package-lock.json">package-lock.json</span>
-- <span class="xp-unrendered" data-path="package.json">package.json</span>
 - [README.md](/)
-- [setup.py](setup.py.md)
