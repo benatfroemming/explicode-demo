@@ -1,6 +1,3 @@
-- **assets**
-  - <span class="xp-unrendered" data-path="assets/globe.webp">globe.webp</span>
-  - <span class="xp-unrendered" data-path="assets/haversine.png">haversine.png</span>
 - **geo**
   - [clustering.py](/geo/clustering.py.md)
   - [haversine.py](/geo/haversine.py.md)
