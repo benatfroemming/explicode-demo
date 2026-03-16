@@ -2,7 +2,7 @@
 
 A Python toolkit that computes great-circle distances between geographic coordinates, clusters locations by proximity, and summarises the results with descriptive statistics.
 
-Built with [Explicode](https://explicode.com) — write Markdown inside your code comments to create beautiful documentation automatically. See the documentation [here](https://www.npmjs.com/package/explicode?activeTab=readme).
+Built with [Explicode](https://explicode.com) — write Markdown inside your code comments to create beautiful documentation automatically. See the documentation [here](https://www.npmjs.com/package/explicode?activeTab=readme). Click on the GitHub icon or the repository name on the top of the sidebar to see the raw code and implementation.
 
 ---
 
