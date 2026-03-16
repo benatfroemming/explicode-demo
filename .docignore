@@ -1,5 +1,2 @@
-Pipfile
-Makefile
-LICENSE
-*.cfg
-*.lock
+__pycache__/
+output.txt

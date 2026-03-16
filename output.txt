@@ -1,0 +1,19 @@
+Cities: New York, London, Tokyo, Sydney, São Paulo, Cairo, Mumbai, Mexico City, Lagos, Beijing
+
+── all pairwise distances (km) (n=45) ──
+  min        2089.39
+  max       18537.21
+  mean       9883.82
+  median     9558.56
+  std        4066.19
+
+Clusters (radius = 8,000 km): 3 group(s)
+  [1] New York, London, São Paulo, Mexico City
+       centroid (22.0°, -55.0°)  spread 5700 km
+  [2] Tokyo, Sydney, Mumbai, Beijing
+       centroid (15.2°, 120.0°)  spread 6377 km
+  [3] Cairo, Lagos
+       centroid (18.3°, 17.3°)  spread 1997 km
+
+Longest route:  Tokyo ↔ São Paulo  (18,537 km)
+Shortest route: Tokyo ↔ Beijing  (2,089 km)
